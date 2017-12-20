@@ -114,6 +114,9 @@ textarea {
     padding-bottom: 5px;
 }
 
+#video-down {
+    cursor: pointer;
+}
 
 /* ==========================================================================
    Helper classes

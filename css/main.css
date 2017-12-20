@@ -97,18 +97,15 @@ textarea {
    Author's custom styles
    ========================================================================== */
 
+.jumbotron {
+    background: black;
+    color: white;
 
 
-
-
-
-
-
-
-
-
-
-
+.fill { 
+    min-height: 100%;
+    height: 100%;
+}
 
 
 

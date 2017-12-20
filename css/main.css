@@ -110,6 +110,10 @@ textarea {
     padding-bottom: 40px;
 }
 
+.small-bottom-pad {
+    padding-bottom: 5px;
+}
+
 
 /* ==========================================================================
    Helper classes

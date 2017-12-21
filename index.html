@@ -17,7 +17,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
-<body data-spy="scroll" data-target="#scroll-navbar" data-offset="50">
+<body data-spy="scroll" data-target="#scroll-navbar" data-offset="100">
     <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
@@ -46,9 +46,14 @@
             </div>
         </div>
     </nav>
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+    </div>
     <div id="banner" class="container-fluid top-pad" style="background: black;">
         <div class="row">
-            <img src="img/pwndevils_banner.jpg" alt="pwndevils ctf" class="img-responsive" />
+            <img src="img/pwndevils_banner.jpg" id="banner-img" alt="pwndevils ctf" class="img-responsive" />
         </div>
     </div>
     <div class="jumbotron text-center">
@@ -109,7 +114,7 @@
     <div id="about-faculty" class="container-fluid greySection bottom-pad">
         <div class="row">
             <div class="text-center bottom-pad">
-                <h1>Faculty Advisors</h1>
+                <h1><b>Faculty Advisors</b></h1>
                 <h4>The pwndevils would not exist without the support of the following faculty members (who try to hack right alongside the team)</h4>
             </div>
             <div class="col-sm-2 col-sm-offset-4">
@@ -128,7 +133,7 @@
     </div>
     <div id="calendar" class="container bottom-pad">
         <div class="row text-center">
-            <h1>Calendar</h1>
+            <h1><b>Calendar</b></h1>
             <h3>
                 Here's our calendar of events (meetings and CTFs that we participate in):
                 <br>
@@ -140,7 +145,7 @@
     </div>
     <div id="videos" class="container-fluid greySection bottom-pad">
         <div class="text-center">
-            <h1>Videos</span></h1>
+            <h1><b>Videos</b></h1>
             <h3>Here are some recording of our meetings in the past:</h3>
         </div>
         <div class="row bottom-pad col-sm-offset-1" id="video-top-section">
@@ -222,7 +227,7 @@
     </div>
     <div id="getting-started" class="container-fluid  bottom-pad">
         <div class="text-center">
-            <h1>Getting Started</h1>
+            <h1><b>Getting Started</b></h1>
         </div>
         <div class="row col-sm-offset-2">
             <div class="col-sm-3">
@@ -249,7 +254,7 @@
     </div>
     <div id="history" class="container-fluid greySection bottom-pad">
         <div class="text-center">
-            <h1>History</h1>
+            <h1><b>History</b></h1>
             <h3>pwndevils is best team NA</h3>
         </div>
     </div>

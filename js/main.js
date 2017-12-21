@@ -1,3 +1,9 @@
+$document.ready(function(){
+            $('[data-spy="scroll"]').each(function () {
+                var $spy = $(this).scrollspy('refresh')
+                }); 
+        });
+
 $("#video-down").click(function() {
 	$("#toggle-section").slideToggle(225);
 	img = document.getElementById("img-down");

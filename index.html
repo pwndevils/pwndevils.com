@@ -13,14 +13,32 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
-<body>
+<body data-spy="scroll" data-target="#scroll-navbar" data-offset="50">
     <!--[if lte IE 9]>
             <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
         <![endif]-->
     <!-- Add your site or application content here -->
-    <div class="container-fluid" style="background: black;">
+    <nav id="scroll-navbar" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">PWNDEVILS</a>
+            </div>
+            <ul class="nav navbar-nav">
+                <li><a href="#banner">Home</a></li>
+                <li><a href="#about-club">About Club</a></li>
+                <li><a href="#about-faculty">Faculty</a></li>
+                <li><a href="#calendar">Calendar</a></li>
+                <li><a href="#videos">Videos</a></li>
+                <li><a href="#getting-started">Getting Started</a></li>
+                <li><a href="#history">History</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div id="banner" class="container-fluid" style="background: black;">
         <div class="row">
             <img src="img/pwndevils_banner.jpg" alt="pwndevils ctf" class="img-responsive" />
         </div>
@@ -28,7 +46,7 @@
     <div class="jumbotron text-center">
         <p>You have reached the amazingly awesome page of the <a href="https://ctftime.org/team/14321">pwndevils</a>, a hacking group started at Arizona State University. We love learning about computer systems and competing in <a href="https://en.wikipedia.org/wiki/Capture_the_flag#Computer_security">Capture the Flag</a> to demonstrate our computer security knowledge.</p>
     </div>
-    <div class="container bottom-pad">
+    <div id="about-club" class="container bottom-pad">
         <div class="row">
             <h1 class="text-center bottom-pad"><b>About The Club</b></h1>
             <div class="col-sm-4">
@@ -80,7 +98,7 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid greySection bottom-pad">
+    <div id="about-faculty" class="container-fluid greySection bottom-pad">
         <div class="row">
             <div class="text-center bottom-pad">
                 <h1>Faculty Advisors</h1>
@@ -100,7 +118,7 @@
             </div>
         </div>
     </div>
-    <div class="container bottom-pad">
+    <div id="calendar" class="container bottom-pad">
         <div class="row text-center">
             <h1>Calendar</h1>
             <h3>
@@ -112,7 +130,7 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid greySection bottom-pad">
+    <div id="videos" class="container-fluid greySection bottom-pad">
         <div class="text-center">
             <h1>Videos</span></h1>
             <h3>Here are some recording of our meetings in the past:</h3>
@@ -194,7 +212,7 @@
     <div class="container-fluid greySection" id="video-down">
         <img id="img-down" class="img-responsive center-block" src="img/down.png">
     </div>
-    <div class="container-fluid  bottom-pad">
+    <div id="getting-started" class="container-fluid  bottom-pad">
         <div class="text-center">
             <h1>Getting Started</h1>
         </div>
@@ -221,7 +239,7 @@
             </div>
         </div>
     </div>
-    <div class="container-fluid greySection bottom-pad">
+    <div id="history" class="container-fluid greySection bottom-pad">
         <div class="text-center">
             <h1>History</h1>
             <h3>pwndevils is best team NA</h3>

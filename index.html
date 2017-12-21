@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="css/main.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
 
 <body data-spy="scroll" data-target="#scroll-navbar" data-offset="50">
@@ -25,17 +25,25 @@
     <nav id="scroll-navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-content">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
                 <a class="navbar-brand" href="#">PWNDEVILS</a>
             </div>
-            <ul class="nav navbar-nav">
-                <li><a href="#banner">Home</a></li>
-                <li><a href="#about-club">About Club</a></li>
-                <li><a href="#about-faculty">Faculty</a></li>
-                <li><a href="#calendar">Calendar</a></li>
-                <li><a href="#videos">Videos</a></li>
-                <li><a href="#getting-started">Getting Started</a></li>
-                <li><a href="#history">History</a></li>
-            </ul>
+            <div class="collapse navbar-collapse" id="nav-content">
+                <ul class="nav navbar-nav">
+                    <li><a href="#banner">Home</a></li>
+                    <li><a href="#about-club">About Club</a></li>
+                    <li><a href="#about-faculty">Faculty</a></li>
+                    <li><a href="#calendar">Calendar</a></li>
+                    <li><a href="#videos">Videos</a></li>
+                    <li><a href="#getting-started">Getting Started</a></li>
+                    <li><a href="#history">History</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
     <div id="banner" class="container-fluid" style="background: black;">

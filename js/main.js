@@ -29,15 +29,13 @@ else {
 }
 function handler() {
 	$('body').toggleClass('loaded');
-	console.log("called");
 }
 
 $(".nav li a").on('click', function(event) {
 
-    console.log("Before Hash");
+
     // Make sure this.hash has a value before overriding default behavior
     if (this.hash !== "") {
-        console.log("After Hash");
 
         // Prevent default anchor click behavior
         event.preventDefault();
@@ -50,7 +48,7 @@ $(".nav li a").on('click', function(event) {
         $('html, body').animate({
             scrollTop: $(hash).offset().top - (window.innerHeight / 20)
         }, 400, function() {
-        	console.log("SCROLLING");
+        	
             // Add hash (#) to URL when done scrolling (default click behavior)
             //window.location.hash = hash;
         });

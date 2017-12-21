@@ -110,6 +110,10 @@ textarea {
     padding-bottom: 40px;
 }
 
+.top-pad {
+    padding-top: 15%;
+}
+
 .small-bottom-pad {
     padding-bottom: 5px;
 }
@@ -126,10 +130,9 @@ h3 {
     font-size: 1.8em;
 }
 
-.rotate180 {
-  transform: rotate(180deg) translate(-100%, -100%);
-  -webkit-transform: rotate(180deg) translate(-100%, -100%);
-  -ms-transform: rotate(180deg) translateX(-100%, -100%);
+#top-bar {
+    background: black;
+    height: 10%;
 }
 
 

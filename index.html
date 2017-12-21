@@ -22,7 +22,7 @@
     <!-- Add your site or application content here -->
     <div class="container-fluid">
         <div class="row">
-            <img src="img/pwndevils_banner.jpg" class="img-responsive" />
+            <img src="img/pwndevils_banner.jpg" alt="pwndevils ctf" class="img-responsive" />
         </div>
     </div>
     <div class="jumbotron text-center">
@@ -30,13 +30,19 @@
     </div>
     <div class="container bottom-pad">
         <div class="row">
-            <h1 class="text-center bottom-pad">About The Club</h1>
+            <h1 class="text-center bottom-pad"><b>About The Club</b></h1>
             <div class="col-sm-4">
                 <div class="col-sm-12 well">
                     <h2 class="text-center">Meeting Times</h2>
                     <p>Pwndevils alpha: Thursdays 4pm&ndash;6pm, usually in BYENG 420</p>
                     <p>Pwndevils beta: 4:30pm&ndash;6:30pm, usually in BYENG 420</p>
                     <p>Please see <a href="https://groups.google.com/forum/#!forum/pwndevils">the mailing list</a> for more info</p>
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-2">
+                            <a href="https://twitter.com/pwndevils" class="twitter-follow-button pagination-centered" data-show-count="false" data-size="large">Follow @pwndevils</a>
+                            <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -44,9 +50,17 @@
                     <h2 class="text-center">Join</h2>
                     <p>Joining the pwndevils is easy, <b>everyone is welcome!</b>
                         <br> Simply <a href="https://groups.google.com/forum/#!forum/pwndevils">join
-		  the mailing list</a>. Meeting times, meeting locations, and CTFs that we will participate in are sent out on the mailing list.</p>
+          the mailing list</a>. Meeting times, meeting locations, and CTFs that we will participate in are sent out on the mailing list.</p>
                     <p>Also, folks with an ASU email account can automatically <a href="https://pwndevils.slack.com">register
-			for the pwndevils slack</a>, where we chat when competing in a CTF.</p>
+            for the pwndevils slack</a>, where we chat when competing in a CTF.</p>
+                    <div class="row">
+                        <div class="col-sm-6 top-margin">
+                            <button type="button" class="btn btn-primary btn-lg" onclick="location.href='https://groups.google.com/forum/#!forum/pwndevils'">Join Mailing List</button>
+                        </div>
+                        <div class="col-sm-6 top-margin">
+                            <button type="button" class="btn btn-success btn-lg" onclick="location.href='https://pwndevils.slack.com'">Join Slack</button>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -55,7 +69,7 @@
                     <p> pwndevil officers make things go: they organize meetings, get food for meetings (yay), and are generally awesome people.
                         <br>
                         <br>
-                        <b>Root</b>: Will Gibbs
+                        <b>Root</b>: Wil Gibbs
                         <br>
                         <b>V33P</b>: Connor Nelson
                         <br>
@@ -158,7 +172,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row bottom-pad col-sm-offset-1">
+            <div class="row col-sm-offset-1">
                 <div class="col-sm-2 small-bottom-pad">
                     <div class="col-sm-12 embed-responsive embed-responsive-16by9">
                         <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/X_ftSBHlDTM" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
@@ -178,7 +192,7 @@
         </div>
     </div>
     <div class="container-fluid greySection" id="video-down">
-        <img class="img-responsive center-block" src="img/down.png">
+        <img id="img-down" class="img-responsive center-block" src="img/down.png">
     </div>
     <div class="container-fluid  bottom-pad">
         <div class="text-center">
@@ -196,13 +210,13 @@
             <div class="col-sm-3">
                 <p>A lot of our recent challenges run best on <a href="https://www.docker.com">Docker</a> so we recommend installing that as well.</p>
                 <p>Also great is to work your way through the <a href="http://overthewire.org/wargames/">OverTheWire
-			war-games</a>: Bandit is the game that's targeted towards beginners, and it helps you get familiar with linux environments. The other games are great, and get more and more difficult (in a good way).
+            war-games</a>: Bandit is the game that's targeted towards beginners, and it helps you get familiar with linux environments. The other games are great, and get more and more difficult (in a good way).
                 </p>
             </div>
             <div class="col-sm-3">
                 <p>We've been collecting/creating a set of CTF challenges, as well as custom challenges, that run on docker at <a href="https://github.com/adamdoupe/ctf-training">https://github.com/adamdoupe/ctf-training</a>.</p>
                 <p>For web hacking, <a href="https://google-gruyere.appspot.com/">Google
-			has a good practice/testing web application</a>.
+            has a good practice/testing web application</a>.
                 </p>
             </div>
         </div>

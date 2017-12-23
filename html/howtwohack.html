@@ -1,0 +1,158 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>pwndevils</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" href="../icon.png">
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" href="../css/normalize.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" href="../css/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</head>
+
+<body data-spy="scroll" data-target="#scroll-navbar" data-offset="100">
+    <!--[if lte IE 9]>
+            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
+        <![endif]-->
+    <!-- Add your site or application content here -->
+    <nav id="scroll-navbar" class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#nav-content">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">PWNDEVILS</a>
+            </div>
+            <div class="collapse navbar-collapse" id="nav-content">
+                <ul class="nav navbar-nav">
+                    <li><a href="../index.html#banner">Home</a></li>
+                    <li><a href="../index.html#about-club">About Club</a></li>
+                    <li><a href="../index.html#about-faculty">Faculty</a></li>
+                    <li><a href="../index.html#calendar">Calendar</a></li>
+                    <li><a href="../index.html#videos">Videos</a></li>
+                    <li><a href="../index.html#getting-started">Getting Started</a></li>
+                    <li><a href="../index.html#history">History</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a href="#banner">HowTwoHack</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div id="loader-wrapper">
+        <div id="loader"></div>
+        <div class="loader-section section-left"></div>
+        <div class="loader-section section-right"></div>
+    </div>
+    <div id="banner" class="container-fluid top-pad" style="background: black;">
+        <div class="row">
+            <img src="../img/pwndevils_banner.jpg" id="banner-img" alt="pwndevils ctf" class="img-responsive" />
+        </div>
+    </div>
+    <div class="jumbotron text-center">
+        <p>You have reached the amazingly awesome page of the <a href="https://ctftime.org/team/14321">pwndevils</a>, a hacking group started at Arizona State University. We love learning about computer systems and competing in <a href="https://en.wikipedia.org/wiki/Capture_the_flag#Computer_security">Capture the Flag</a> to demonstrate our computer security knowledge.</p>
+    </div>
+    <div id="learn-hack" class="container bottom-pad">
+        <div class="row">
+            <h1 class="text-center"><b>So You Want To Learn How To Hack?</b></h1>
+            <h4 class="text-center bottom-pad">Pick a category that interests you and get started!</h4>
+            <div class="col-sm-4">
+                <div class="col-sm-12 well">
+                    <h2 class="text-center">Binary Exploitation</h2>
+                    <p class="left-margin">Software applications that can be effected either locally or remotely by outside users.
+                        <br>Sections:</br>
+                        <ul>
+                            <li>Tools</li>
+                            <li>Buffer Overflows</li>
+                            <li>Shellcode</li>
+                            <li>Format Strings</li>
+                            <li>ROP: Return Oriented Programming</li>
+                            <li>Head Exploitation</li>
+                        </ul>
+                        <br></br>
+                        <button type="button" class="btn btn-success btn-lg center-block disabled">Exploit Some Binaries!</button>
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="col-sm-12 well">
+                    <h2 class="text-center">Web Exploitation</h2>
+                    <p class="left-margin">Web applications that can be effected to either gain undue permissions or access to sensitive information.
+                        <br>Sections:</br>
+                        <ul>
+                            <li>Tools</li>
+                            <li>Exploiting The Basics</li>
+                            <li>XSS: Cross-side Scripting</li>
+                            <li>XSRF: Cross-side Request Forgery</li>
+                            <li>Configuration Vulnerabilities</li>
+                        </ul>
+                        <br></br>
+                        <button type="button" class="btn btn-primary btn-lg center-block disabled">Wreck Some Sites!</button>
+                    </p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="col-sm-12 well">
+                    <h2 class="text-center">Cryptography</h2>
+                    <p class="left-margin">Some application of cryptographic function(s) to turn plaintext into ciphertext.
+                        <br>Sections:</br>
+                        <ul>
+                            <li>Resources</li>
+                            <li>Basic Ciphers</li>
+                            <li>ECB &amp; CBC</li>
+                            <li>AES &amp; Public/Private Crypto</li>
+                            <li>What To Look For</li>
+                            <li>How To Approach It</li>
+                        </ul>
+                        <br></br>
+                        <button type="button" class="btn btn-danger btn-lg center-block disabled">Break Some Codes!</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="col-sm-12 well">
+                    <h2 class="text-center">Forensics</h2>
+                    <p class="left-margin">Disk or Network Traffic captures that have some form of interesting conversation or data.
+                        <br>Sections:</br>
+                        <ul>
+                            <li>Tools</li>
+                            <li>Physical Storage</li>
+                            <li>Network Traffic</li>
+                            <li>Partial Data Recovery</li>
+                            <li>Time Stamp Manipulation</li>
+                        </ul>
+                        <br></br>
+                        <button type="button" class="btn btn-warning btn-lg center-block disabled">Find Something Hidden!</button>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script>
+    window.jQuery || document.write('<script src="../js/vendor/jquery-3.2.1.min.js"><\/script>')
+    </script>
+    <script src="../js/plugins.js"></script>
+    <script src="../js/main.js"></script>
+    <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
+    <!-- <script> -->
+    <!--     window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date; -->
+    <!--     ga('create','UA-XXXXX-Y','auto');ga('send','pageview') -->
+    <!-- </script> -->
+    <!-- <script src="https://www.google-analytics.com/analytics.js" async defer></script> -->
+</body>
+
+</html>

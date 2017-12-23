@@ -164,6 +164,11 @@ h3 {
     background: black;
     height: 10%;
 }
+
+.left-margin {
+    margin-left: 5%;
+}
+
 /*All Credit For the Loader goes to Petr Tichy ihatetomatoes.net*/
 
 #loader-wrapper {

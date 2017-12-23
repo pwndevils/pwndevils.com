@@ -151,6 +151,10 @@ textarea {
     padding-bottom: 5px;
 }
 
+.border {
+    outline: 1px solid #D0D0D0;
+}
+
 #video-down {
     cursor: pointer;
 }

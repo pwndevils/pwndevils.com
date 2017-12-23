@@ -35,13 +35,19 @@
             </div>
             <div class="collapse navbar-collapse" id="nav-content">
                 <ul class="nav navbar-nav">
-                    <li><a href="../index.html#banner">Home</a></li>
-                    <li><a href="../index.html#about-club">About Club</a></li>
-                    <li><a href="../index.html#about-faculty">Faculty</a></li>
-                    <li><a href="../index.html#calendar">Calendar</a></li>
-                    <li><a href="../index.html#videos">Videos</a></li>
-                    <li><a href="../index.html#getting-started">Getting Started</a></li>
-                    <li><a href="../index.html#history">History</a></li>
+                    <li class="dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="../index.html">Home
+                        <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="../index.html#about-club">About Club</a></li>
+                            <li><a href="../index.html#about-faculty">Faculty</a></li>
+                            <li><a href="../index.html#calendar">Calendar</a></li>
+                            <li><a href="../index.html#videos">Videos</a></li>
+                            <li><a href="../index.html#getting-started">Getting Started</a></li>
+                            <li><a href="../index.html#history">History</a></li>
+                        </ul>
+                        <li><a href="#binary-exploit">Binary Exploitation</a></li>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     <li class="active"><a href="#banner">HowTwoHack</a></li>
@@ -73,15 +79,16 @@
                         <br>Sections:</br>
                         <ul>
                             <li>Tools</li>
+                            <li>x86 Assembly</li>
                             <li>Buffer Overflows</li>
                             <li>Shellcode</li>
                             <li>Format Strings</li>
                             <li>ROP: Return Oriented Programming</li>
-                            <li>Head Exploitation</li>
+                            <li>Heap Exploitation</li>
                         </ul>
-                        <br></br>
-                        <button type="button" class="btn btn-success btn-lg center-block disabled">Exploit Some Binaries!</button>
+                        <br>
                     </p>
+                    <button type="button" class="btn btn-success btn-lg center-block" onclick="location.href='#binary-exploit'">Exploit Some Binaries!</button>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -97,8 +104,8 @@
                             <li>Configuration Vulnerabilities</li>
                         </ul>
                         <br></br>
-                        <button type="button" class="btn btn-primary btn-lg center-block disabled">Wreck Some Sites!</button>
                     </p>
+                    <button type="button" class="btn btn-primary btn-lg center-block disabled">Wreck Some Sites!</button>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -115,8 +122,8 @@
                             <li>How To Approach It</li>
                         </ul>
                         <br></br>
-                        <button type="button" class="btn btn-danger btn-lg center-block disabled">Break Some Codes!</button>
                     </p>
+                    <button type="button" class="btn btn-danger btn-lg center-block disabled">Break Some Codes!</button>
                 </div>
             </div>
         </div>
@@ -134,10 +141,55 @@
                             <li>Time Stamp Manipulation</li>
                         </ul>
                         <br></br>
-                        <button type="button" class="btn btn-warning btn-lg center-block disabled">Find Something Hidden!</button>
                     </p>
+                    <button type="button" class="btn btn-warning btn-lg center-block disabled">Find Something Hidden!</button>
                 </div>
             </div>
+        </div>
+    </div>
+    <div id="binary-exploit" class="container-fluid bottom-pad">
+        <h1 class="text-center bottom-pad"><b>Binary Exploitation</b></h1>
+        <div class="row center-block greySection" id="binary-tools">
+            <h2 class="text-center"><b>Tools</b></h2>
+            <div class="col-sm-3 col-sm-offset-1">
+                <div class="col-sm-11 col-sm-offset-2">
+                    <p>The first thing that you want to do is set up your environment. If you're not running some version of linux you can use a Virtual Machine (You can use a MAC, but a VM is recommended). A good free option is <a href="https://www.virtualbox.org/wiki/Downloads">Oracle's VirtualBox</a>, but you can use any Virtul Machine softare you're comfortable with.</p>
+                </div>
+            </div>
+            <div class="col-sm-3">
+                <div class="col-sm-11 col-sm-offset-2">
+                    <p>Once you have a VM software, you'll need a linux operating system. If you're new to linux, I'd suggest going with <a href="https://www.ubuntu.com/desktop/1710">Ubuntu</a>, but you can use any linux operating system that you want to. If you're on a 64-bit linux system, we'll want to install the necessary 32-bit libraries. Install them on Ubuntu using <b>sudo apt-get install gcc-multilib</b>.</p>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="col-sm-9 col-sm-offset-1">
+                    <p>Let's set up our python environment! We'll be using python2.7 for some of our challenges so everything that we install will be for that version. A fantastic library of explotation tools for python is <a href="https://docs.pwntools.com/en/stable/">pwntools</a>. You can install it with <b>pip install pwntools</b>. We'll also install <a href="https://github.com/JonathanSalwan/ROPgadget">ROPgadget</a> with <b>pip install ropgadget</b>. There are some dependencies for this library which may cause problems. An optional upgrade is GDB called <a href="https://github.com/hugsy/gef">GEF</a>.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="assembly">
+            <h2 class="text-center"><b>x86 Assembly</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="buffer-overflows">
+            <h2 class="text-center"><b>Buffer Overflows</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="shellcode">
+            <h2 class="text-center"><b>Shellcode</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="format-strings">
+            <h2 class="text-center"><b>Format Strings</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="rop">
+            <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="heap-exploit">
+            <h2 class="text-center"><b>Heap Exploitation</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
         </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>

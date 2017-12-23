@@ -185,6 +185,33 @@ h3 {
     height: 1px;
 }
 
+.parallaxText {
+}
+
+.parallax { 
+    /* The image used */
+    background-image: url("../img/binary-banner.jpg");
+
+    /* Full height */
+    height: 100%;
+
+    /* Create the parallax scrolling effect */
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: white;
+   -webkit-text-stroke: 1px black;
+}
+
+@media only screen and (max-device-width: 1024px) {
+    .parallax {
+        background-attachment: scroll;
+    color: white;
+   -webkit-text-stroke: 1px black;
+    }
+}
+
 /*All Credit For the Loader goes to Petr Tichy ihatetomatoes.net*/
 
 #loader-wrapper {

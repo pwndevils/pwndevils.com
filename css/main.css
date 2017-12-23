@@ -135,6 +135,9 @@ textarea {
 .greySection {
     background: #D0D0D0;
 }
+.whiteSection{
+    background: #FFFFFF;
+}
 
 .bottom-pad {
     padding-bottom: 40px;
@@ -146,6 +149,10 @@ textarea {
 
 .small-bottom-pad {
     padding-bottom: 5px;
+}
+
+.border {
+    outline: 1px solid #D0D0D0;
 }
 
 #video-down {
@@ -164,6 +171,20 @@ h3 {
     background: black;
     height: 10%;
 }
+
+.left-margin {
+    margin-left: 5%;
+}
+
+.button-green {
+    background: #5CB85C;
+}
+
+.line {
+    background: #A0A0A0;
+    height: 1px;
+}
+
 /*All Credit For the Loader goes to Petr Tichy ihatetomatoes.net*/
 
 #loader-wrapper {

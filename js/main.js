@@ -13,23 +13,26 @@ $("#video-down").click(function() {
 $("#banner-img")
     .on('load', function() { handler(); })
     .on('error', function() { console.log("error loading image"); })
-    .attr("src", $("#banner-img").attr("src"))
-;
+    .attr("src", $("#banner-img").attr("src"));
 
 var banner = $("#banner-img");
 if (banner.complete) {
     // Already loaded, call the handler directly
-	console.log("Calling Loader");
+    console.log("Calling Loader");
     handler();
-}
-else {
-	console.log("Added to loader");
+} else {
+    console.log("Added to loader");
     // Not loaded yet, register the handler
     banner.onload = handler;
 }
+
 function handler() {
-	$('body').toggleClass('loaded');
+    $('body').toggleClass('loaded');
 }
+
+$(document).ready(function() {
+    $(".dropdown-toggle").dropdown();
+});
 
 $(".nav li a").on('click', function(event) {
 
@@ -39,19 +42,23 @@ $(".nav li a").on('click', function(event) {
 
         // Prevent default anchor click behavior
         event.preventDefault();
+        if (this.href.split("#")[0].indexOf($(location).attr('href').split("#")[0]) <= -1) {
+        	window.location = this.href;
+        	//$('html').scrollTop = $(hash).offset.top - (window.innerHeight / 20);
+	    }
 
         // Store hash
         var hash = this.hash;
+        console.log(this.hash);
 
         // Using jQuery's animate() method to add smooth page scroll
         // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
         $('html, body').animate({
             scrollTop: $(hash).offset().top - (window.innerHeight / 20)
         }, 400, function() {
-        	
+
             // Add hash (#) to URL when done scrolling (default click behavior)
             //window.location.hash = hash;
         });
     }
 });
-

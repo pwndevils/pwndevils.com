@@ -1,3 +1,5 @@
+
+//Expand/Collapse Video section and changes corresponding image
 $("#video-down").click(function() {
     $("#toggle-section").slideToggle(225);
 
@@ -10,11 +12,14 @@ $("#video-down").click(function() {
     }
 });
 
+//Adds loader to image
 $("#banner-img")
     .on('load', function() { handler(); })
     .on('error', function() { console.log("error loading image"); })
     .attr("src", $("#banner-img").attr("src"));
 
+
+//Checking if image is loaded
 var banner = $("#banner-img");
 if (banner.complete) {
     // Already loaded, call the handler directly
@@ -26,14 +31,18 @@ if (banner.complete) {
     banner.onload = handler;
 }
 
+//Closes loading animation
 function handler() {
     $('body').toggleClass('loaded');
 }
 
+
+//Allows Dropdown to function on the HowTwoHack Page
 $(document).ready(function() {
     $(".dropdown-toggle").dropdown();
 });
 
+//AutoScrolling when clicking on nav-bar
 $(".nav li a").on('click', function(event) {
 
 

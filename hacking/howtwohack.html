@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../css/normalize.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../highlight/styles/default.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
@@ -163,22 +164,90 @@
             </div>
             <div class="col-sm-4">
                 <div class="col-sm-9 col-sm-offset-1">
-                    <p>Let's set up our python environment! We'll be using python2.7 for some of our challenges so everything that we install will be for that version. A fantastic library of explotation tools for python is <a href="https://docs.pwntools.com/en/stable/">pwntools</a>. You can install it with <b>pip install pwntools</b>. We'll also install <a href="https://github.com/JonathanSalwan/ROPgadget">ROPgadget</a> with <b>pip install ropgadget</b>. There are some dependencies for this library which may cause problems. An optional upgrade is GDB called <a href="https://github.com/hugsy/gef">GEF</a>.</p>
+                    <p>Let's set up our python environment! We'll be using python2.7 for some of our challenges so everything that we install will be for that version. A fantastic library of explotation tools for python is <a href="https://docs.pwntools.com/en/stable/">pwntools</a>. You can install it with <b>pip install pwntools</b>. We'll also install <a href="https://github.com/JonathanSalwan/ROPgadget">ROPgadget</a> with <b>pip install ropgadget</b>. There are some dependencies for this library which may cause problems. An optional upgrade for GDB called <a href="https://github.com/hugsy/gef">GEF</a>.</p>
                 </div>
             </div>
         </div>
+        <div class="row bottom-pad" id="assembly">
+            <h2 class="text-center bottom-pad"><b>x86 Assembly</b></h1>
+            <div class="col-sm-3 col-sm-offset-3">
+                <pre><code class="language-cpp">   
+    int a;
+    int b;
+    float c;
+    int main() {
+        a = 10;
+        b = 100;
+        c = 10.45;
+        a = a + b;
+        return 0;
+    }
+                </code></pre>
+            </div>
+            <div class="col-sm-3">
+                <pre><code class="x86asm hljs">    ;a @ 0x8049634
+    ;b @ 0x8049638
+    ;c @ 0x804963c
+    main:
+        movl 0x8049634, 0xa
+        movl 0x8049638, 0x64
+        mov eax, 0x41273333
+        mov 0x804963c, eax
+        mov edx, 0x8049634
+        mov eax, 0x8049638
+        lea eax, [edx+eax*1]
+        mov 0x8049634, eax</code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-3">
+                <p>So what's going on here?  Above are two snippets of code, the first is C code for a small program and the second is it's corresponding x86 assembly code.  Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
+                <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actualy stored at memory locations.  Notice that each of the locations are offests of 4 from eachother.  This is due to the fact that int's and floats take up 32-bits or 4 bytes each.  The second thing to notice is that this is a hard memory address.  Each time the binary is run, the variables will always be located at these exact addresses. Now to get into the actual main method.</p>
+                <p><br>The assignments in C are plain enough where a = 10 and b = 100.  It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T).  We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
+                <p>In Intel syntax, the source is on the right and the destination is on the left.  The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did.  The next line is very similar, I'll let you figure out what it does.</p>
+            </div>
+            <div class="col-sm-2">
+                <pre><code class="cpp">int a;
+int b;
+float c;</code></pre>
+                <pre><code class="x86asm">;a @ 0x8049634
+;b @ 0x8049638
+;c @ 0x804963c</code></pre>
+                <pre style="margin-top: 30%;"><code class="cpp">a = 10;
+b = 100;</code></pre>
+                <pre><code class="x86asm">movl 0x8049634, 0xa
+movl 0x8049638, 0x64</code></pre>
+            </div>
+        </div>
+
         <div class="row" id="assembly">
-            <h2 class="text-center"><b>x86 Assembly</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
-            <div class="col-sm-3 col-sm-offset-3 border">
-            <div class="container-fluid">
-                
-                <div class="col-sm-1 greySection"></div>
+            <div class="col-sm-3 col-sm-offset-3">
+                <pre><code class="cpp">   
+    int main() {
+        int a;
+        int b;
+        float c;
+        a = 10;
+        b = 100;
+        c = 10.45;
+        a = a + b;
+        return 0;
+    }
+                </code></pre>
             </div>
-                <p class="text-center">hello</p>
-            </div>
-            <div class="col-sm-3 border">
-                <p class="text-center">hello</p>
+            <div class="col-sm-3">
+                <pre><code class="x86asm hljs">    ;a @ [ebp-0x4]
+    ;b @ [ebp-0x8]
+    ;c @ [ebp-0xc]
+    main:
+        movl [ebp-0x4], 0xa
+        movl [ebp-0x8], 0x64
+        mov eax, 0x41273333
+        mov [ebp-0xc], eax
+        mov edx, [ebp-0x4]
+        mov eax, [ebp-0x8]
+        lea eax, [edx+eax*1]
+        mov [ebp-0x4], eax</code></pre>
             </div>
         </div>
         <div class="row" id="buffer-overflows">
@@ -209,6 +278,10 @@
     </script>
     <script src="../js/plugins.js"></script>
     <script src="../js/main.js"></script>
+    <script src="../highlight/highlight.pack.js"></script>
+    <script>
+    hljs.initHighlightingOnLoad();
+    </script>
     <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
     <!-- <script> -->
     <!--     window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date; -->

@@ -169,7 +169,8 @@
             </div>
         </div>
         <div class="row bottom-pad" id="assembly">
-            <h2 class="text-center bottom-pad"><b>x86 Assembly</b></h1>
+            <h2 class="text-center bottom-pad"><b>x86 Assembly</b></h2>
+            <h3 class="text-center">Global Variables</h3>
             <div class="col-sm-3 col-sm-offset-3">
                 <pre><code class="language-cpp">   
     int a;
@@ -199,31 +200,58 @@
         mov 0x8049634, eax</code></pre>
             </div>
         </div>
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-3">
-                <p>So what's going on here?  Above are two snippets of code, the first is C code for a small program and the second is it's corresponding x86 assembly code.  Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
-                <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actualy stored at memory locations.  Notice that each of the locations are offests of 4 from eachother.  This is due to the fact that int's and floats take up 32-bits or 4 bytes each.  The second thing to notice is that this is a hard memory address.  Each time the binary is run, the variables will always be located at these exact addresses. Now to get into the actual main method.</p>
-                <p><br>The assignments in C are plain enough where a = 10 and b = 100.  It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T).  We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
-                <p>In Intel syntax, the source is on the right and the destination is on the left.  The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did.  The next line is very similar, I'll let you figure out what it does.</p>
-            </div>
-            <div class="col-sm-2">
+        <div class="row bottom-pad">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>So what's going on here?  Above are two snippets of code, the first is C code for a small program and the second is it's corresponding x86 assembly code.  Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
+                        
+                        <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actualy stored at memory locations.  Notice that each of the locations are offests of 4 from eachother.  This is due to the fact that int's and floats take up 32-bits or 4 bytes each.  The second thing to notice is that this is a hard memory address.  Each time the binary is run, the variables will always be located at these exact addresses. Now to get into the actual main method.</p>
+                    </div>
+                <div class="col-sm-4">
                 <pre><code class="cpp">int a;
 int b;
 float c;</code></pre>
                 <pre><code class="x86asm">;a @ 0x8049634
 ;b @ 0x8049638
-;c @ 0x804963c</code></pre>
-                <pre style="margin-top: 30%;"><code class="cpp">a = 10;
+;c @ 0x804963c</code></pre></div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p><br>The assignments in C are plain enough where a = 10 and b = 100.  It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T).  We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
+                        
+                        <p>In Intel syntax, the source is on the right and the destination is on the left.  The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did.  The next line is very similar, I'll let you figure out what it does.</p>
+                    </div> 
+                    <div class="col-sm-4">
+                <pre style="margin-top: 10%;"><code class="cpp">a = 10;
 b = 100;</code></pre>
                 <pre><code class="x86asm">movl 0x8049634, 0xa
 movl 0x8049638, 0x64</code></pre>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="col-sm-8">
+
+                        <p><br>It's important to note that in x86, there are several general purpose registers that are used often: eax, ebx, ecx, and edx.  For our purposes you can think of them as registers that are used to store values temporarily so that they can be used in operations such as addition or division.</p>
+
+                        <p><b>mov</b> is much like <b>movl</b>, but it is mostly used with registers rather than immediate values. In this case, the value stored in <b>0x8049634</b> or <b>a</b> is moved into <b>edx</b>. The same is done with <b>b</b> and <b>eax</b>. The <b>lea</b> instruction is an optimization trick by the compiler that bypasses the ALU and uses the address bus.  The ['s are actually dereferences an address.  Essentially, it loads the value of <b>edx</b> + <b>eax</b> into <b>eax</b> meaning <b>eax</b> = <b>eax</b> + <b>edx</b>. The final line moves <b>eax</b> into the location that <b>a</b> is stored at.</p>
+                    </div>
+                <div class="col-sm-4">
+                <pre style="margin-top: 10%;"><code class="cpp">a = a + b;</code></pre>
+                <pre><code class="x86asm">mov edx, 0x8049634
+mov eax, 0x8049638
+lea eax, [edx+eax*1]
+mov 0x8049634, eax</code></pre></div>
+                    </div>
             </div>
         </div>
 
         <div class="row" id="assembly">
-            <div class="col-sm-3 col-sm-offset-3">
-                <pre><code class="cpp">   
+            <h3 class="text-center">Local Variables</h3>
+            <div class="col-sm-3 col-sm-offset-2">
+                <pre><code class="cpp">  
     int main() {
+
         int a;
         int b;
         float c;
@@ -247,7 +275,20 @@ movl 0x8049638, 0x64</code></pre>
         mov edx, [ebp-0x4]
         mov eax, [ebp-0x8]
         lea eax, [edx+eax*1]
-        mov [ebp-0x4], eax</code></pre>
+        mov [ebp-0x4], eax
+        </code></pre>
+            </div>
+            <div class="col-sm-1 well stack-loc"></div>
+            <div class="col-sm-1 text-center">
+                <p style="font-size: 5.4em;">&rarr;</p>
+            </div>
+            <div class="col-sm-1 well stack-loc"></div>
+        </div>
+        <div class="row" id="assembly">
+            <div class="col-sm-4 col-sm-offset-3"></div>
+        </div>
+        <div class="row bottom-pad">
+            <div class="col-sm-3 col-sm-offset-3">
             </div>
         </div>
         <div class="row" id="buffer-overflows">

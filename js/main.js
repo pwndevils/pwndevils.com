@@ -1,4 +1,3 @@
-
 //Expand/Collapse Video section and changes corresponding image
 $("#video-down").click(function() {
     $("#toggle-section").slideToggle(225);
@@ -11,6 +10,53 @@ $("#video-down").click(function() {
         img.src = "img/down.png";
     }
 });
+
+//Makes Stack from bootstrap elements
+function makeStack(size, elem) {
+    stackRoot = elem;
+
+    for (i = 0; i < size; i++) {
+        node = document.createElement("div");
+        node.className += "row text-center center-block border";
+
+        para = document.createElement("p");
+        para.style.marginTop = "10%";
+        text = document.createTextNode("");
+        para.appendChild(text);
+
+        node.appendChild(para);
+        stackRoot.appendChild(node);
+    }
+}
+
+function stackData(data, elem) {
+    stackRoot = elem;
+
+    children = stackRoot.children;
+
+    for (i = 0; i < children.length; i++) {
+        childElem = children[i].children[0];
+        if (i < data.length) {
+            childElem.textContent = data[i];
+        } else {
+        	if (childElem.textContent == "")
+        		childElem.textContent = "0x0";
+        }
+    }
+}
+
+stacks = document.getElementsByClassName("stack-loc");
+
+for (h = 0; h < stacks.length; h++) {
+	makeStack(6, stacks[h]);
+	stackData(['0xa', '0x64', '0x41273333'], stacks[h]);
+}
+
+stackData(['0x6e'], stacks[1]);
+
+stacks = document.getElementsByClassName("stack-loc");
+
+
 
 //Adds loader to image
 $("#banner-img")
@@ -36,12 +82,6 @@ function handler() {
     $('body').toggleClass('loaded');
 }
 
-
-//Allows Dropdown to function on the HowTwoHack Page
-$(document).ready(function() {
-    $(".dropdown-toggle").dropdown();
-});
-
 //AutoScrolling when clicking on nav-bar
 $(".nav li a").on('click', function(event) {
 
@@ -52,9 +92,9 @@ $(".nav li a").on('click', function(event) {
         // Prevent default anchor click behavior
         event.preventDefault();
         if (this.href.split("#")[0].indexOf($(location).attr('href').split("#")[0]) <= -1) {
-        	window.location = this.href;
-        	//$('html').scrollTop = $(hash).offset.top - (window.innerHeight / 20);
-	    }
+            window.location = this.href;
+            //$('html').scrollTop = $(hash).offset.top - (window.innerHeight / 20);
+        }
 
         // Store hash
         var hash = this.hash;

@@ -1,3 +1,4 @@
+var currStackLine = 0;
 //Expand/Collapse Video section and changes corresponding image
 $("#video-down").click(function() {
     $("#toggle-section").slideToggle(225);
@@ -12,16 +13,18 @@ $("#video-down").click(function() {
 });
 
 //Makes Stack from bootstrap elements
-function makeStack(size, elem) {
-    stackRoot = elem;
+function makeStack(elem) {
+    var stackRoot = elem;
+    var vals = stackRoot.textContent.split(" ");
+    stackRoot.textContent = "";
 
-    for (i = 0; i < size; i++) {
-        node = document.createElement("div");
+    for (i = 0; i < vals.length; i++) {
+        var node = document.createElement("div");
         node.className += "row text-center center-block border";
 
-        para = document.createElement("p");
+        var para = document.createElement("p");
         para.style.marginTop = "10%";
-        text = document.createTextNode("");
+        var text = document.createTextNode(vals[i]);
         para.appendChild(text);
 
         node.appendChild(para);
@@ -29,32 +32,47 @@ function makeStack(size, elem) {
     }
 }
 
-function stackData(data, elem) {
-    stackRoot = elem;
+function stackSetup() {
 
-    children = stackRoot.children;
+    var stacks = document.getElementsByClassName("stack-loc");
 
-    for (i = 0; i < children.length; i++) {
-        childElem = children[i].children[0];
-        if (i < data.length) {
-            childElem.textContent = data[i];
-        } else {
-        	if (childElem.textContent == "")
-        		childElem.textContent = "0x0";
-        }
+    for (h = 0; h < stacks.length; h++) {
+        makeStack(stacks[h]);
     }
 }
 
-stacks = document.getElementsByClassName("stack-loc");
+stackSetup();
 
-for (h = 0; h < stacks.length; h++) {
-	makeStack(6, stacks[h]);
-	stackData(['0xa', '0x64', '0x41273333'], stacks[h]);
-}
+$("#stack-test-button").click(function() {
+    var elem = document.getElementById("stack-example-asm");
+    var currStack = document.getElementById("main-ex-stack");
+    var regStack = document.getElementById("register-ex-stack");
 
-stackData(['0x6e'], stacks[1]);
+    if ($(this).hasClass('btn-danger')) {
+        $(this).removeClass('btn-danger');
+        $(this).addClass('btn-success');
+        this.textContent = "Start";
+        console.log(elem);
 
-stacks = document.getElementsByClassName("stack-loc");
+        removeHighlight(elem);
+        removeHighlight(currStack);
+        regStack.children[1].children[1].children[0].textContent = " ";
+
+    } else {
+        this.textContent = "Next";
+        var lines = elem.textContent.split('\n');
+        var currLine = getLineNumber(elem);
+
+        if (currLine < lines.length) {
+            parseASM(lines[currLine], currLine, elem, currStack, regStack);
+            if (currLine == lines.length - 1) {
+                $(this).removeClass('btn-success');
+                $(this).addClass('btn-danger');
+                this.textContent = "Restart";
+            }
+        }
+    }
+});
 
 
 
@@ -111,3 +129,170 @@ $(".nav li a").on('click', function(event) {
         });
     }
 });
+
+function getLineNumber(code) {
+    inner = code.innerHTML.split('\n');
+    for (var i = 0; i < inner.length; i++) {
+        if (inner[i].indexOf('class="highlight"') > -1) {
+            return i + 1;
+        }
+    }
+    return 0;
+}
+
+
+function removeHighlight(elem) {
+    var inner = elem.innerHTML;
+    elem.innerHTML = inner.replace('class="highlight"', 'class="nohighlight"');
+    console.log(inner);
+}
+
+function highlightText(elem, lineNum) {
+    var inner = elem.innerHTML.split('\n');
+    if (inner[lineNum].substring(0, 26) === '<span class="nohighlight">') {
+        inner[lineNum] = inner[lineNum].replace("nohighlight", "highlight");
+    } else {
+        inner[lineNum] = "<span class='highlight'>" + inner[lineNum] + "</span>";
+    }
+    elem.innerHTML = inner.join('\n');
+
+}
+
+function parseRegStack(regStack) {
+    var children = regStack.children;
+    var regs = children[0].children;
+    var vals = children[1].children;
+
+    var returnRegs = [];
+    var returnVals = [];
+
+    for (var i = 0; i < regs.length; i++) {
+        returnRegs.push(regs[i].textContent);
+        returnVals.push(vals[i].textContent);
+    }
+
+    return [returnRegs, returnVals];
+}
+
+function findCurrStackBlock(currStack) {
+    var children = currStack.children;
+    var idx = 0;
+    var found = false;
+    while (!found && idx < children.length) {
+        if (children[idx].textContent === " ") {
+            if (idx > 0) {
+                return [children[idx].children[0], children[idx - 1].children[0]];
+            }
+            return [children[idx].children[0]];
+        }
+        idx++;
+    }
+    return [-1];
+}
+
+function updateRegister(regStack, inc, val, regName) {
+    var regs = regStack.children[0].children;
+    var vals = regStack.children[1].children;
+    var pVals = [];
+
+    var text = [];
+
+    for (var i = 0; i < regs.length; i++) {
+        text.push(regs[i].textContent);
+        pVals.push(vals[i].children[0]);
+    }
+
+    var regIdx = text.indexOf(regName);
+    if (regIdx > -1) {
+        var regVal = parseInt(vals[regIdx].textContent);
+        if (inc)
+            regVal += val;
+        else
+            regVal = val;
+        pVals[regIdx].textContent = "0x" + regVal.toString(16);
+    }
+
+}
+
+//parses a mov instruction
+function parseMov(words, currStack, regStack) {
+    return 0;
+}
+
+//parses a push instruction
+function parsePush(words, currStack, regStack) {
+    var result = parseRegStack(regStack);
+
+    var regs = result[0];
+    var vals = result[1];
+
+    var idx = regs.indexOf(words[1]);
+    var stackVals = findCurrStackBlock(currStack);
+    var elem = stackVals[0];
+    if (elem != -1) {
+        if (idx > -1) {
+            elem.textContent = vals[idx];
+        } else {
+            elem.textContent = words[1];
+        }
+        if (stackVals.length > 1) {
+            removeHighlight(stackVals[1]);
+        }
+        highlightText(elem, 0);
+
+        updateRegister(regStack, true, -4, "esp");
+    }
+}
+
+//parses a pop instruction
+function parsePop(words, currStack, regStack) {
+    var result = parseRegStack(regStack);
+
+    var regs = result[0];
+    var vals = result[1];
+
+    var idx = regs.indexOf(words[1]);
+    var stackVals = findCurrStackBlock(currStack);
+    var elem = stackVals[1];
+    if (elem != -1) {
+        if (idx > -1) {
+            var updateVal = parseInt(elem.textContent);
+            console.log(vals[idx]);
+            updateRegister(regStack, false, updateVal, "ebx")
+            elem.textContent = " ";
+        }
+
+        if (stackVals.length > 1) {
+            removeHighlight(elem);
+        }
+        stackVals = findCurrStackBlock(currStack);
+        highlightText(stackVals[1], 0);
+
+        updateRegister(regStack, true, 4, "esp");
+    }
+}
+
+//This is the parser for the x86 Stack
+function parseASM(line, lineNum, elem, currStack, regStack) {
+    var keywords = ["mov", "push", "pop"];
+    removeHighlight(elem);
+    highlightText(elem, lineNum);
+    var line = line.replace(",", "");
+    var words = line.split(" ");
+    switch (keywords.indexOf(words[0])) {
+        case 0:
+            parseMov(words, currStack, regStack);
+            break;
+        case 1:
+            parsePush(words, currStack, regStack);
+            break;
+        case 2:
+            parsePop(words, currStack, regStack);
+            break;
+    }
+}
+
+/*  This gets all code examples.
+allCode = $('code').map(function(){
+  return $(this).text();
+}).get();*/

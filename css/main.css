@@ -185,7 +185,12 @@ h3 {
     height: 1px;
 }
 
-.parallaxText {
+.highlight {
+    background: yellow;
+}
+
+.nohighligh {
+    background: none;
 }
 
 .parallax { 

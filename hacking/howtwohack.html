@@ -51,7 +51,7 @@
                     </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li class="active"><a href="#banner">HowTwoHack</a></li>
+                    <li class="active"><a href="#banner">How2Hack</a></li>
                 </ul>
             </div>
         </div>
@@ -236,7 +236,7 @@ movl 0x8049638, 0x64</code></pre>
 
                         <p><b>mov</b> is much like <b>movl</b>, but it is mostly used with registers rather than immediate values. In this case, the value stored in <b>0x8049634</b> or <b>a</b> is moved into <b>edx</b>. The same is done with <b>b</b> and <b>eax</b>. The <b>lea</b> instruction is an optimization trick by the compiler that bypasses the ALU and uses the address bus.  The ['s are actually dereferences an address.  Essentially, it loads the value of <b>edx</b> + <b>eax</b> into <b>eax</b> meaning <b>eax</b> = <b>eax</b> + <b>edx</b>. The final line moves <b>eax</b> into the location that <b>a</b> is stored at.</p>
                     </div>
-                <div class="col-sm-4">
+                    <div class="col-sm-4">
                 <pre style="margin-top: 10%;"><code class="cpp">a = a + b;</code></pre>
                 <pre><code class="x86asm">mov edx, 0x8049634
 mov eax, 0x8049638
@@ -245,7 +245,38 @@ mov 0x8049634, eax</code></pre></div>
                     </div>
             </div>
         </div>
-
+        <h3 class="col-sm-offset-5 bottom-pad">Stack Example</h3>
+        <div class="row">
+            <div class="col-sm-3 col-sm-offset-2">
+                <div class="container-fluid">
+                    <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>.  It keeps track of where exactly we are on the stack in memory.</p>
+                    <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4.  Take note, that the stack starts at high memory addresses and grows to low memory address.  Our starting value here is at 0x10000 as shown in the bottom left.  When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case).  Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
+                </div>
+            </div>
+            <div class="col-sm-4 well">
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-3 bottom-pad">
+                        <h5 class="text-center">0xFFFFFFFF</h5>
+                        <div class="stack-loc" id="main-ex-stack">... &nbsp; &nbsp; &nbsp; ... Garbage</div>
+                        <h5 class="text-center">0x00000000</h5>
+                    </div>
+                    <div class="col-sm-3" style="margin-top: 25%;">
+                        <div class="row">
+                            <pre><code class="x86asm" id="stack-example-asm">push eax
+pop ebx</code></pre>
+                        
+                    <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="stack-test-button">Start</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row block">
+                    <div class="col-sm-5" id="register-ex-stack">
+                        <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax ebx esp</div>
+                        <div class="stack-loc" style="float: left; display: inline; width: 50%;">0xa &nbsp; 0x10000</div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="row" id="assembly">
             <h3 class="text-center">Local Variables</h3>
             <div class="col-sm-3 col-sm-offset-2">
@@ -264,25 +295,25 @@ mov 0x8049634, eax</code></pre></div>
                 </code></pre>
             </div>
             <div class="col-sm-3">
-                <pre><code class="x86asm hljs">    ;a @ [ebp-0x4]
+                <pre><code class="x86asm hljs">    ;a @ [ebp-0xc]
     ;b @ [ebp-0x8]
-    ;c @ [ebp-0xc]
+    ;c @ [ebp-0xa]
     main:
-        movl [ebp-0x4], 0xa
+        movl [ebp-0xc], 0xa
         movl [ebp-0x8], 0x64
         mov eax, 0x41273333
-        mov [ebp-0xc], eax
-        mov edx, [ebp-0x4]
+        mov [ebp-0x4], eax
+        mov edx, [ebp-0xc]
         mov eax, [ebp-0x8]
         lea eax, [edx+eax*1]
-        mov [ebp-0x4], eax
+        mov [ebp-0xc], eax
         </code></pre>
             </div>
-            <div class="col-sm-1 well stack-loc"></div>
+            <div class="col-sm-1 well stack-loc">0xa 0x64 0x41273333 ???? ???? ????</div>
             <div class="col-sm-1 text-center">
                 <p style="font-size: 5.4em;">&rarr;</p>
             </div>
-            <div class="col-sm-1 well stack-loc"></div>
+            <div class="col-sm-1 well stack-loc">0x6e 0x64 0x41273333 ???? ???? ????</div>
         </div>
         <div class="row" id="assembly">
             <div class="col-sm-4 col-sm-offset-3"></div>

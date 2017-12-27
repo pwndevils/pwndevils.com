@@ -218,7 +218,7 @@ float c;</code></pre>
                 </div>
                 <div class="row">
                     <div class="col-sm-8">
-                        <p><br>The assignments in C are plain enough where a = 10 and b = 100.  It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T).  We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
+                        <p><br>The assignments in C are plain enough where <b>a = 10</b> and <b>b = 100</b>.  It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T).  We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
                         
                         <p>In Intel syntax, the source is on the right and the destination is on the left.  The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did.  The next line is very similar, I'll let you figure out what it does.</p>
                     </div> 
@@ -246,7 +246,7 @@ mov 0x8049634, eax</code></pre></div>
             </div>
         </div>
         <h3 class="text-center">Stack Example</h3>
-        <div class="row">
+        <div class="row bottom-pad">
             <div class="col-sm-3 col-sm-offset-2">
                 <div class="container-fluid">
                     <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>.  It keeps track of where exactly we are on the stack in memory.</p>
@@ -277,7 +277,7 @@ pop ebx</code></pre>
                 </div>
             </div>
         </div>
-        <div class="row" id="assembly">
+        <div class="row bottom-pad" id="assembly">
             <h3 class="text-center">Local Variables</h3>
             <div class="col-sm-3 col-sm-offset-2">
                 <pre><code class="cpp">  
@@ -309,14 +309,41 @@ pop ebx</code></pre>
         mov [ebp-0xc], eax
         </code></pre>
             </div>
-            <div class="col-sm-1 well stack-loc">0xa 0x64 0x41273333 ???? ???? ????</div>
+            <div class="col-sm-1 well stack-loc">0x41273333 0x64 0xa ???? ???? ????</div>
             <div class="col-sm-1 text-center">
                 <p style="font-size: 5.4em;">&rarr;</p>
             </div>
-            <div class="col-sm-1 well stack-loc">0x6e 0x64 0x41273333 ???? ???? ????</div>
+            <div class="col-sm-1 well stack-loc">0x41273333 0x64 0x6e ???? ???? ????</div>
         </div>
         <div class="row" id="assembly">
-            <div class="col-sm-4 col-sm-offset-3"></div>
+            <div class="col-sm-6 col-sm-offset-3">
+            <div class="row">
+                <div class="col-sm-8">
+                    <p>So, what's the difference between global variables and local variables. The answer is scope, but you probably already knew that. Now, look back at the global variable example and you'll see that the variables have hard coded addresses in assembly. Now look at where the variables are stored when they're initialized as local variables.  If you compare the global and local variable example, you'll see that the only real difference is that instead of the hex address, we have this weird <b>[ebp-NUM]</b> where <b>NUM</b> is any hex value.</p>
+                    <p>To understand this, we'll need to know what the <b>ebp</b> is. The <b>ebp</b> is the <b>Base Pointer</b>, also known as the <b>Frame Pointer</b>. It functions as an indicator to the start of a function frame which will be shown later. It marks address of the start of the stack in a function. When local variables are created they are stored on the stack because they are temporary and only live within their own scope. You can see their storage on stacks to the right of the example assembly code. Since the <b>ebp</b> has the location of the start of the stack for the function, the local variables can be accessed using offsets of it. Assuming the <b>ebp</b> points at the very top of the example stacks, <b>[ebp-0x4]</b> would be the first word shown on the stack with <b>[ebp-0x8]</b> being the second and so on.</p>
+                </div>
+                <div class="col-sm-4">
+                <pre><code class="cpp">int a;
+int b;
+float c;</code></pre>
+                <pre><code class="x86asm">;a @ [ebp-0xc]
+;b @ [ebp-0x8]
+;c @ [ebp-0x4]</code></pre>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <p>Just as with the global variable example, let's look at what the assignment of the local variables look like. The C code is the same for assignments, but the assembly code is different. Since the variables are local, they are located on the stack rather than at a hard coded address like the global variables. This means that accessing the variables on the stack will be done with an offset from <b>ebp</b>. The <b>movl</b> instruction has the same function as the global variable example. The rest of the assembly is essential the same as well, except with the reference to the variables replaced with offsets of <b>ebp</b>.</p>
+                </div>
+                <div class="col-sm-4">
+                <pre><code class="cpp">a = 10;
+b = 100;</code></pre>
+                <pre><code class="x86asm">movl [ebp-0xc], 0xa
+movl [ebp-0x8], 0x64</code></pre>
+                </div>
+            </div>
+            </div>
+        </div>
         </div>
         <div class="row bottom-pad">
             <div class="col-sm-3 col-sm-offset-3">

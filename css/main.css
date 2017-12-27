@@ -167,6 +167,16 @@ h3 {
     font-size: 1.8em;
 }
 
+@media (max-width: @screen-xs) {
+    h3{font-size: 10px;}
+}
+
+@media (max-width: @screen-sm) {
+    h3{font-size: 14px;}
+}
+
+
+
 #top-bar {
     background: black;
     height: 10%;
@@ -189,9 +199,11 @@ h3 {
     background: yellow;
 }
 
-.nohighligh {
+.nohighlight {
     background: none;
 }
+
+button:focus {outline:0;}
 
 .parallax { 
     /* The image used */

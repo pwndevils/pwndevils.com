@@ -204,53 +204,51 @@
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="row">
                     <div class="col-sm-8">
-                        <p>So what's going on here?  Above are two snippets of code, the first is C code for a small program and the second is it's corresponding x86 assembly code.  Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
-                        
-                        <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actualy stored at memory locations.  Notice that each of the locations are offests of 4 from eachother.  This is due to the fact that int's and floats take up 32-bits or 4 bytes each.  The second thing to notice is that this is a hard memory address.  Each time the binary is run, the variables will always be located at these exact addresses. Now to get into the actual main method.</p>
+                        <p>So what's going on here? Above are two snippets of code, the first is C code for a small program and the second is it's corresponding x86 assembly code. Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
+                        <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actualy stored at memory locations. Notice that each of the locations are offests of 4 from eachother. This is due to the fact that int's and floats take up 32-bits or 4 bytes each. The second thing to notice is that this is a hard memory address. Each time the binary is run, the variables will always be located at these exact addresses. Now to get into the actual main method.</p>
                     </div>
-                <div class="col-sm-4">
-                <pre><code class="cpp">int a;
+                    <div class="col-sm-4">
+                        <pre><code class="cpp">int a;
 int b;
 float c;</code></pre>
-                <pre><code class="x86asm">;a @ 0x8049634
+                        <pre><code class="x86asm">;a @ 0x8049634
 ;b @ 0x8049638
 ;c @ 0x804963c</code></pre></div>
                 </div>
                 <div class="row">
                     <div class="col-sm-8">
-                        <p><br>The assignments in C are plain enough where <b>a = 10</b> and <b>b = 100</b>.  It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T).  We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
-                        
-                        <p>In Intel syntax, the source is on the right and the destination is on the left.  The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did.  The next line is very similar, I'll let you figure out what it does.</p>
-                    </div> 
-                    <div class="col-sm-4">
-                <pre style="margin-top: 10%;"><code class="cpp">a = 10;
-b = 100;</code></pre>
-                <pre><code class="x86asm">movl 0x8049634, 0xa
-movl 0x8049638, 0x64</code></pre>
-                </div>
-            </div>
-            <div class="row">
-                    <div class="col-sm-8">
-
-                        <p><br>It's important to note that in x86, there are several general purpose registers that are used often: eax, ebx, ecx, and edx.  For our purposes you can think of them as registers that are used to store values temporarily so that they can be used in operations such as addition or division.</p>
-
-                        <p><b>mov</b> is much like <b>movl</b>, but it is mostly used with registers rather than immediate values. In this case, the value stored in <b>0x8049634</b> or <b>a</b> is moved into <b>edx</b>. The same is done with <b>b</b> and <b>eax</b>. The <b>lea</b> instruction is an optimization trick by the compiler that bypasses the ALU and uses the address bus.  The ['s are actually dereferences an address.  Essentially, it loads the value of <b>edx</b> + <b>eax</b> into <b>eax</b> meaning <b>eax</b> = <b>eax</b> + <b>edx</b>. The final line moves <b>eax</b> into the location that <b>a</b> is stored at.</p>
+                        <p>
+                            <br>The assignments in C are plain enough where <b>a = 10</b> and <b>b = 100</b>. It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T). We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
+                        <p>In Intel syntax, the source is on the right and the destination is on the left. The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did. The next line is very similar, I'll let you figure out what it does.</p>
                     </div>
                     <div class="col-sm-4">
-                <pre style="margin-top: 10%;"><code class="cpp">a = a + b;</code></pre>
-                <pre><code class="x86asm">mov edx, 0x8049634
+                        <pre style="margin-top: 10%;"><code class="cpp">a = 10;
+b = 100;</code></pre>
+                        <pre><code class="x86asm">movl 0x8049634, 0xa
+movl 0x8049638, 0x64</code></pre>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>
+                            <br>It's important to note that in x86, there are several general purpose registers that are used often: eax, ebx, ecx, and edx. For our purposes you can think of them as registers that are used to store values temporarily so that they can be used in operations such as addition or division.</p>
+                        <p><b>mov</b> is much like <b>movl</b>, but it is mostly used with registers rather than immediate values. In this case, the value stored in <b>0x8049634</b> or <b>a</b> is moved into <b>edx</b>. The same is done with <b>b</b> and <b>eax</b>. The <b>lea</b> instruction is an optimization trick by the compiler that bypasses the ALU and uses the address bus. The ['s are actually dereferences an address. Essentially, it loads the value of <b>edx</b> + <b>eax</b> into <b>eax</b> meaning <b>eax</b> = <b>eax</b> + <b>edx</b>. The final line moves <b>eax</b> into the location that <b>a</b> is stored at.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre style="margin-top: 10%;"><code class="cpp">a = a + b;</code></pre>
+                        <pre><code class="x86asm">mov edx, 0x8049634
 mov eax, 0x8049638
 lea eax, [edx+eax*1]
 mov 0x8049634, eax</code></pre></div>
-                    </div>
+                </div>
             </div>
         </div>
         <h3 class="text-center">Stack Example</h3>
         <div class="row bottom-pad">
             <div class="col-sm-3 col-sm-offset-2">
                 <div class="container-fluid">
-                    <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>.  It keeps track of where exactly we are on the stack in memory.</p>
-                    <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4.  Take note, that the stack starts at high memory addresses and grows to low memory address.  Our starting value here is at 0x10000 as shown in the bottom left.  When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case).  Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
+                    <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>. It keeps track of where exactly we are on the stack in memory.</p>
+                    <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4. Take note, that the stack starts at high memory addresses and grows to low memory address. Our starting value here is at 0x10000 as shown in the bottom left. When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case). Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
                 </div>
             </div>
             <div class="col-sm-4 well">
@@ -264,8 +262,7 @@ mov 0x8049634, eax</code></pre></div>
                         <div class="row">
                             <pre><code class="x86asm" id="stack-example-asm">push eax
 pop ebx</code></pre>
-                        
-                    <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="stack-test-button">Start</button>
+                            <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="stack-test-button">Start</button>
                         </div>
                     </div>
                 </div>
@@ -299,14 +296,14 @@ pop ebx</code></pre>
     ;b @ [ebp-0x8]
     ;c @ [ebp-0xa]
     main:
+        mov ebp, esp
+        sub esp, 0x10
         movl [ebp-0xc], 0xa
         movl [ebp-0x8], 0x64
         mov eax, 0x41273333
         mov [ebp-0x4], eax
-        mov edx, [ebp-0xc]
         mov eax, [ebp-0x8]
-        lea eax, [edx+eax*1]
-        mov [ebp-0xc], eax
+        add [ebp-0xc], eax
         </code></pre>
             </div>
             <div class="col-sm-1 well stack-loc">0x41273333 0x64 0xa ???? ???? ????</div>
@@ -317,58 +314,91 @@ pop ebx</code></pre>
         </div>
         <div class="row" id="assembly">
             <div class="col-sm-6 col-sm-offset-3">
-            <div class="row">
-                <div class="col-sm-8">
-                    <p>So, what's the difference between global variables and local variables. The answer is scope, but you probably already knew that. Now, look back at the global variable example and you'll see that the variables have hard coded addresses in assembly. Now look at where the variables are stored when they're initialized as local variables.  If you compare the global and local variable example, you'll see that the only real difference is that instead of the hex address, we have this weird <b>[ebp-NUM]</b> where <b>NUM</b> is any hex value.</p>
-                    <p>To understand this, we'll need to know what the <b>ebp</b> is. The <b>ebp</b> is the <b>Base Pointer</b>, also known as the <b>Frame Pointer</b>. It functions as an indicator to the start of a function frame which will be shown later. It marks address of the start of the stack in a function. When local variables are created they are stored on the stack because they are temporary and only live within their own scope. You can see their storage on stacks to the right of the example assembly code. Since the <b>ebp</b> has the location of the start of the stack for the function, the local variables can be accessed using offsets of it. Assuming the <b>ebp</b> points at the very top of the example stacks, <b>[ebp-0x4]</b> would be the first word shown on the stack with <b>[ebp-0x8]</b> being the second and so on.</p>
-                </div>
-                <div class="col-sm-4">
-                <pre><code class="cpp">int a;
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>So, what's the difference between global variables and local variables. The answer is scope, but you probably already knew that. Now, look back at the global variable example and you'll see that the variables have hard coded addresses in assembly. Now look at where the variables are stored when they're initialized as local variables. If you compare the global and local variable example, you'll see that the only real difference is that instead of the hex address, we have this weird <b>[ebp-NUM]</b> where <b>NUM</b> is any hex value.</p>
+                        <p>To understand this, we'll need to know what the <b>ebp</b> is. The <b>ebp</b> is the <b>Base Pointer</b>, also known as the <b>Frame Pointer</b>. Whenever a function is called, depending on its memory needs, it may allocate some amount of the stack to use as scrap memory. This is where the <b>ebp</b> comes in. It acts as an indicator to the start of a function frame which is the start of the function's stack. When local variables are created they are stored on the stack because they are temporary and only live within their own scope. You can see their storage on stacks to the right of the example assembly code. Since the <b>ebp</b> has the location of the start of the stack for the function, the local variables can be accessed using offsets of it. Assuming the <b>ebp</b> points at the very top of the example stacks, <b>[ebp-0x4]</b> would be the first word shown on the stack with <b>[ebp-0x8]</b> being the second and so on.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="cpp">int a;
 int b;
 float c;</code></pre>
-                <pre><code class="x86asm">;a @ [ebp-0xc]
+                        <pre><code class="x86asm">;a @ [ebp-0xc]
 ;b @ [ebp-0x8]
 ;c @ [ebp-0x4]</code></pre>
+                        <pre><code class="x86asm">mov ebp, esp
+sub esp, 0x10</code></pre>
+                    </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-8">
-                    <p>Just as with the global variable example, let's look at what the assignment of the local variables look like. The C code is the same for assignments, but the assembly code is different. Since the variables are local, they are located on the stack rather than at a hard coded address like the global variables. This means that accessing the variables on the stack will be done with an offset from <b>ebp</b>. The <b>movl</b> instruction has the same function as the global variable example. The rest of the assembly is essential the same as well, except with the reference to the variables replaced with offsets of <b>ebp</b>.</p>
-                </div>
-                <div class="col-sm-4">
-                <pre><code class="cpp">a = 10;
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>Just as with the global variable example, let's look at what the assignment of the local variables look like. The C code is the same for assignments, but the assembly code is different. Since the variables are local, they are located on the stack rather than at a hard coded address like the global variables. This means that accessing the variables on the stack will be done with an offset from <b>ebp</b>. The <b>movl</b> instruction has the same function as the global variable example. The rest of the assembly is essential the same as well, except with the reference to the variables replaced with offsets of <b>ebp</b> and since we can store stuff on the stack there is no need to use the <b>lea</b> instruction to add and store the results.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="cpp">a = 10;
 b = 100;</code></pre>
-                <pre><code class="x86asm">movl [ebp-0xc], 0xa
+                        <pre><code class="x86asm">movl [ebp-0xc], 0xa
 movl [ebp-0x8], 0x64</code></pre>
+                    </div>
                 </div>
             </div>
-            </div>
         </div>
-        </div>
+        <h3 class="text-center">Local Variable Example</h3>
         <div class="row bottom-pad">
-            <div class="col-sm-3 col-sm-offset-3">
+            <div class="col-sm-4 col-sm-offset-4 well">
+                <div class="row">
+                    <div class="col-sm-5 col-sm-offset-3 bottom-pad">
+                        <h5 class="text-center">0xFFFFFFFF</h5>
+                        <div class="stack-loc" id="local-var-ex-stack">... &nbsp; &nbsp; &nbsp; ... Garbage</div>
+                        <h5 class="text-center">0x00000000</h5>
+                    </div>
+                    <div class="col-sm-4" style="margin-top: 35px;">
+                        <div class="row">   
+                            <pre><code class="x86asm" id="local-var-ex-asm">mov ebp, esp
+sub esp, 0x10
+movl [ebp-0xc], 0xa
+movl [ebp-0x8], 0x64
+mov eax, 0x41273333
+mov [ebp-0x4], eax
+mov eax, [ebp-0x8]
+add [ebp-0xc], eax</code></pre>
+                            <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="local-var-test-button">Start</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-5" id="register-local-ex-stack">
+                        <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp</div>
+                        <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10000 &nbsp;</div>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row" id="buffer-overflows">
-            <h2 class="text-center"><b>Buffer Overflows</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
+    </div>
+    <div class="row bottom-pad">
+        <div class="col-sm-3 col-sm-offset-3">
         </div>
-        <div class="row" id="shellcode">
-            <h2 class="text-center"><b>Shellcode</b></h1>
+    </div>
+    <div class="row" id="buffer-overflows">
+        <h2 class="text-center"><b>Buffer Overflows</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
-        <div class="row" id="format-strings">
-            <h2 class="text-center"><b>Format Strings</b></h1>
+    </div>
+    <div class="row" id="shellcode">
+        <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
-        <div class="row" id="rop">
-            <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
+    </div>
+    <div class="row" id="format-strings">
+        <h2 class="text-center"><b>Format Strings</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
-        <div class="row" id="heap-exploit">
-            <h2 class="text-center"><b>Heap Exploitation</b></h1>
+    </div>
+    <div class="row" id="rop">
+        <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
+    </div>
+    <div class="row" id="heap-exploit">
+        <h2 class="text-center"><b>Heap Exploitation</b></h1>
+            <h3 class="text-center">Coming Soon!</h2>
+    </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

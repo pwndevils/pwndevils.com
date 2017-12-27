@@ -199,6 +199,14 @@ h3 {
     background: yellow;
 }
 
+.ebp {
+     background: lightblue;
+}
+
+.noebp {
+    background: none;
+}
+
 .nohighlight {
     background: none;
 }

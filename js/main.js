@@ -52,10 +52,9 @@ $("#stack-test-button").click(function() {
         $(this).removeClass('btn-danger');
         $(this).addClass('btn-success');
         this.textContent = "Start";
-        console.log(elem);
 
-        removeHighlight(elem);
-        removeHighlight(currStack);
+        removeHighlight(elem, "highlight");
+        removeHighlight(currStack, "highlight");
         regStack.children[1].children[1].children[0].textContent = " ";
 
     } else {
@@ -74,6 +73,42 @@ $("#stack-test-button").click(function() {
     }
 });
 
+$("#local-var-test-button").click(function() {
+    var elem = document.getElementById("local-var-ex-asm");
+    var currStack = document.getElementById("local-var-ex-stack");
+    var regStack = document.getElementById("register-local-ex-stack");
+
+    if ($(this).hasClass('btn-danger')) {
+        $(this).removeClass('btn-danger');
+        $(this).addClass('btn-success');
+        this.textContent = "Start";
+
+        removeHighlight(elem, "highlight");
+        removeHighlight(currStack, "highlight");
+
+        removeHighlight(currStack, "ebp");
+        regStack.children[1].children[0].children[0].textContent = " ";
+        regStack.children[1].children[1].children[0].textContent = "0x10000";
+        regStack.children[1].children[2].children[0].textContent = " ";
+        currStack.children[1].children[0].textContent = " ";
+        currStack.children[2].children[0].textContent = " ";
+        currStack.children[3].children[0].textContent = " ";
+
+    } else {
+        this.textContent = "Next";
+        var lines = elem.textContent.split('\n');
+        var currLine = getLineNumber(elem);
+
+        if (currLine < lines.length) {
+            parseASM(lines[currLine], currLine, elem, currStack, regStack);
+            if (currLine == lines.length - 1) {
+                $(this).removeClass('btn-success');
+                $(this).addClass('btn-danger');
+                this.textContent = "Restart";
+            }
+        }
+    }
+});
 
 
 //Adds loader to image
@@ -116,7 +151,6 @@ $(".nav li a").on('click', function(event) {
 
         // Store hash
         var hash = this.hash;
-        console.log(this.hash);
 
         // Using jQuery's animate() method to add smooth page scroll
         // The optional number (800) specifies the number of milliseconds it takes to scroll to the specified area
@@ -141,18 +175,17 @@ function getLineNumber(code) {
 }
 
 
-function removeHighlight(elem) {
+function removeHighlight(elem, className) {
     var inner = elem.innerHTML;
-    elem.innerHTML = inner.replace('class="highlight"', 'class="nohighlight"');
-    console.log(inner);
+    elem.innerHTML = inner.replace('class="' + className + '"', 'class="no' + className + '"');
 }
 
-function highlightText(elem, lineNum) {
+function highlightText(elem, lineNum, className) {
     var inner = elem.innerHTML.split('\n');
-    if (inner[lineNum].substring(0, 26) === '<span class="nohighlight">') {
-        inner[lineNum] = inner[lineNum].replace("nohighlight", "highlight");
+    if (inner[lineNum].substring(0, 26) === '<span class="no' + className + '">') {
+        inner[lineNum] = inner[lineNum].replace("no" + className, className);
     } else {
-        inner[lineNum] = "<span class='highlight'>" + inner[lineNum] + "</span>";
+        inner[lineNum] = "<span class='" + className + "'>" + inner[lineNum] + "</span>";
     }
     elem.innerHTML = inner.join('\n');
 
@@ -209,14 +242,124 @@ function updateRegister(regStack, inc, val, regName) {
             regVal += val;
         else
             regVal = val;
-        pVals[regIdx].textContent = "0x" + regVal.toString(16);
+        pVals[regIdx].textContent = "0x" + regVal.toString(16).replace('0x', '');
     }
 
 }
 
+function getEBPBlock(currVal, ref, currStack) {
+    var updateVal = parseInt(currVal);
+    var offset = parseInt(ref.replace('[', '').replace(']', '').split('-')[1]);
+    var idx = (0x10000 - (updateVal - offset)) / 4;
+    var child = currStack.children[idx].children[0];
+    return child;
+}
+
+function parseSub(words, currStack, regStack) {
+    var result = parseRegStack(regStack);
+
+    var regs = result[0];
+    var vals = result[1];
+
+    var regIdx = regs.indexOf(words[1]);
+    var val = parseInt(words[2]);
+
+    if (regIdx > -1) {
+        updateRegister(regStack, true, -val, regs[regIdx]);
+        if (regs[regIdx] === "esp") {
+            var updateVal = vals[regIdx] - val;
+            var idx = (0x10000 - updateVal) / 4;
+            var child = currStack.children[idx].children[0];
+
+            highlightText(child, 0, "highlight");
+        }
+    }
+
+}
+
+function parseAdd(words, currStack, regStack) {
+    var result = parseRegStack(regStack);
+
+    var regs = result[0];
+    var vals = result[1];
+    var isOffset = false;
+
+    if (words[1].indexOf("[") > -1 || words[2].indexOf("[") > -1) {
+        isOffset = true;
+    }
+    var reg1Idx = regs.indexOf(words[1]);
+    var reg2Idx = regs.indexOf(words[2]);
+
+    if (!isOffset) {
+
+    } else {
+        if (words[2].indexOf("[") > -1) {
+            isOffset = false;
+        }
+        if (isOffset) {
+            if (reg2Idx > -1) {
+                var child = getEBPBlock(vals[regs.indexOf("ebp")], words[1], currStack);
+
+                var sum = parseInt(child.textContent) + parseInt(vals[reg2Idx]);
+                child.textContent = "0x" + sum.toString(16).replace('0x', '');
+            }
+        }
+    }
+}
+
 //parses a mov instruction
 function parseMov(words, currStack, regStack) {
-    return 0;
+    var result = parseRegStack(regStack);
+
+    var regs = result[0];
+    var vals = result[1];
+    var isOffset = false;
+
+    if (words[1].indexOf("[") > -1 || words[2].indexOf("[") > -1) {
+        isOffset = true;
+    }
+    var reg1Idx = regs.indexOf(words[1]);
+    var reg2Idx = regs.indexOf(words[2]);
+
+    if (!isOffset) {
+        if (reg1Idx > -1 && reg2Idx > -1) {
+            var updateVal = vals[reg2Idx];
+            updateRegister(regStack, false, updateVal, regs[reg1Idx]);
+            if (words[1] === "ebp") {
+                var idx = (0x10000 - updateVal) / 4;
+                var child = currStack.children[idx].children[0];
+
+                highlightText(child, 0, "ebp");
+            }
+
+        } else if (reg1Idx > -1 && reg2Idx < 0) {
+            var updateVal = parseInt(words[2]);
+            updateRegister(regStack, false, updateVal, regs[reg1Idx]);
+
+        } else if (reg1Idx < 0 && reg2Idx > -1) {
+
+        }
+    } else {
+        if (words[2].indexOf("[") > -1) {
+            isOffset = false;
+        }
+        if (isOffset) {
+            var child = getEBPBlock(vals[regs.indexOf("ebp")], words[1], currStack);
+
+            var sum = parseInt
+            if (reg2Idx > -1) {
+                child.textContent = vals[reg2Idx];
+            } else {
+                child.textContent = words[2];
+            }
+        } else {
+            var child = getEBPBlock(vals[regs.indexOf("ebp")], words[2], currStack);
+            if (reg1Idx > -1) {
+                updateVal = parseInt(child.textContent);
+                updateRegister(regStack, false, updateVal, words[1]);
+            }
+        }
+    }
 }
 
 //parses a push instruction
@@ -236,9 +379,9 @@ function parsePush(words, currStack, regStack) {
             elem.textContent = words[1];
         }
         if (stackVals.length > 1) {
-            removeHighlight(stackVals[1]);
+            removeHighlight(stackVals[1], "highlight");
         }
-        highlightText(elem, 0);
+        highlightText(elem, 0, "highlight");
 
         updateRegister(regStack, true, -4, "esp");
     }
@@ -257,16 +400,15 @@ function parsePop(words, currStack, regStack) {
     if (elem != -1) {
         if (idx > -1) {
             var updateVal = parseInt(elem.textContent);
-            console.log(vals[idx]);
             updateRegister(regStack, false, updateVal, "ebx")
             elem.textContent = " ";
         }
 
         if (stackVals.length > 1) {
-            removeHighlight(elem);
+            removeHighlight(elem, "highlight");
         }
         stackVals = findCurrStackBlock(currStack);
-        highlightText(stackVals[1], 0);
+        highlightText(stackVals[1], 0, "highlight");
 
         updateRegister(regStack, true, 4, "esp");
     }
@@ -274,9 +416,9 @@ function parsePop(words, currStack, regStack) {
 
 //This is the parser for the x86 Stack
 function parseASM(line, lineNum, elem, currStack, regStack) {
-    var keywords = ["mov", "push", "pop"];
-    removeHighlight(elem);
-    highlightText(elem, lineNum);
+    var keywords = ["mov", "push", "pop", "movl", "sub", "add"];
+    removeHighlight(elem, "highlight");
+    highlightText(elem, lineNum, "highlight");
     var line = line.replace(",", "");
     var words = line.split(" ");
     switch (keywords.indexOf(words[0])) {
@@ -288,6 +430,15 @@ function parseASM(line, lineNum, elem, currStack, regStack) {
             break;
         case 2:
             parsePop(words, currStack, regStack);
+            break;
+        case 3:
+            parseMov(words, currStack, regStack);
+            break;
+        case 4:
+            parseSub(words, currStack, regStack);
+            break;
+        case 5:
+            parseAdd(words, currStack, regStack);
             break;
     }
 }

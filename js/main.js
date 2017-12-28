@@ -130,7 +130,7 @@ $("#call-conv-test-button").click(function() {
         regStack.children[1].children[3].children[0].textContent = "0x100a0";
         regStack.children[1].children[4].children[0].textContent = "0x80483a5";
         for (var i = 0; i < currStack.children.length; i++) {
-        	currStack.children[i].children[0].textContent =  " ";
+            currStack.children[i].children[0].textContent = " ";
         }
 
     } else {
@@ -184,6 +184,78 @@ $("#call-conv-test-button").click(function() {
     }
 });
 
+$("#overflow-test-button").click(function() {
+    var elem = document.getElementById("overflow-ex-asm");
+    var currStack = document.getElementById("overflow-ex-stack");
+    var regStack = document.getElementById("register-overflow-ex-stack");
+
+    if ($(this).hasClass('btn-danger')) {
+        $(this).removeClass('btn-danger');
+        $(this).addClass('btn-success');
+        this.textContent = "Start";
+
+        removeHighlight(elem, "highlight");
+        removeHighlight(currStack, "highlight");
+
+        removeHighlight(currStack, "ebp");
+        regStack.children[1].children[0].children[0].textContent = " ";
+        regStack.children[1].children[2].children[0].textContent = "0x10004";
+        regStack.children[1].children[3].children[0].textContent = "0x100a0";
+        regStack.children[1].children[4].children[0].textContent = "0x804840e";
+        for (var i = 0; i < currStack.children.length; i++) {
+            currStack.children[i].children[0].textContent = " ";
+        }
+
+    } else {
+        this.textContent = "Next";
+        var lines = elem.textContent.split('\n');
+        var result = getLineNumber(elem);
+        var currLine = result[0];
+
+        if (currLine == 0 && !result[1]) {
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf("main:") > -1) {
+                    currLine = i + 1;
+                    break;
+                }
+            }
+        }
+        if (lines[currLine - 1].indexOf("call") > -1) {
+            currLine = 1;
+        }
+        if (lines[currLine - 1].indexOf("ret") > -1) {
+            var result = parseRegStack(regStack);
+
+            var regs = result[0];
+            var vals = result[1];
+            var ebp = vals[regs.indexOf("eip")];
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf(":") < 0) {
+                    var addr = (lines[i].split(";")[1]);
+                    if (addr === ebp) {
+                        currLine = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (currLine < lines.length) {
+            if (currLine != lines.length - 1 || lines[currLine].indexOf("ret") < 0) {
+                parseASM(lines[currLine], currLine, elem, currStack, regStack);
+            } else {
+                removeHighlight(elem, "highlight");
+                highlightText(elem, currLine, "highlight");
+            }
+
+            if (currLine == lines.length - 1) {
+                $(this).removeClass('btn-success');
+                $(this).addClass('btn-danger');
+                this.textContent = "Restart";
+            }
+        }
+    }
+});
 
 //Adds loader to image
 $("#banner-img")
@@ -337,7 +409,25 @@ function getBlock(currVal, ref, currStack) {
     return child;
 }
 
-function parseLeave(words, currStack, regStack, elem) {
+function parseStrCpy(words, currStack, regStack) {
+
+}
+
+function parseLEA(words, currStack, regStack) {
+    var result = parseRegStack(regStack);
+
+    var regs = result[0];
+    var vals = result[1];
+
+    var sourceReg = words[2].replace("[", "").replace("]", "").split("-");
+    var offset = -1 * parseInt(sourceReg[1]);
+
+    var regAddr = parseInt(vals[regs.indexOf(sourceReg[0])]);
+    var offsetAddr = regAddr + offset;
+    updateRegister(regStack, false, offsetAddr, words[1]);
+}
+
+function parseLeave(words, currStack, regStack) {
     parseMov("mov esp ebp".split(" "), currStack, regStack);
     parsePop("pop ebp".split(" "), currStack, regStack);
 }
@@ -348,23 +438,27 @@ function parseRet(words, currStack, regStack, elem) {
 }
 
 function parseCall(words, currStack, regStack, elem) {
-    var code = elem.textContent.split('\n');
-    var index = 0;
-    var label = 0;
-    for (var i = 0; i < code.length; i++) {
-        if (code[i].indexOf(words[1]) == 0) {
-            label = i;
+    if (words[0] === "strcpy") {
+        parseStrCpy(words, currStack, regStack);
+    } else {
+        var code = elem.textContent.split('\n');
+        var index = 0;
+        var label = 0;
+        for (var i = 0; i < code.length; i++) {
+            if (code[i].indexOf(words[1]) == 0) {
+                label = i;
+            }
+            var text = code[i].trim().split(" ");
+            if (text[1] === words[1]) {
+                index = i + 1;
+            }
         }
-        var text = code[i].trim().split(" ");
-        if (text[1] === words[1]) {
-            index = i + 1;
-        }
+        var val = parseInt(code[index].replace(" ", "").split(";")[1]);
+        updateRegister(regStack, false, val, "eip");
+        parsePush("push eip".split(" "), currStack, regStack);
+        val = parseInt(code[index - 1].replace(" ", "").split(";")[1]);
+        updateRegister(regStack, false, val, "eip");
     }
-    var val = parseInt(code[index].replace(" ", "").split(";")[1]);
-    updateRegister(regStack, false, val, "eip");
-    parsePush("push eip".split(" "), currStack, regStack);
-    val = parseInt(code[index - 1].replace(" ", "").split(";")[1]);
-    updateRegister(regStack, false, val, "eip");
 }
 
 function parseSub(words, currStack, regStack) {
@@ -484,6 +578,10 @@ function parseMov(words, currStack, regStack) {
                 var sum = parseInt
                 if (reg2Idx > -1) {
                     child.textContent = vals[reg2Idx];
+                    var ref = parseInt(words[1].replace('[', '').replace(']', '').split('+')[1]);
+                    if (ref == 0) {
+                        highlightText(child, 0, "highlight");
+                    }
                 } else {
                     child.textContent = words[2];
                     var ref = parseInt(words[1].replace('[', '').replace(']', '').split('+')[1]);
@@ -576,7 +674,7 @@ function parsePop(words, currStack, regStack) {
 
 //This is the parser for the x86 Stack
 function parseASM(line, lineNum, elem, currStack, regStack) {
-    var keywords = ["mov", "push", "pop", "movl", "sub", "add", "call", "ret", "leave"];
+    var keywords = ["mov", "push", "pop", "movl", "sub", "add", "call", "ret", "leave", "lea"];
     removeHighlight(elem, "highlight");
     highlightText(elem, lineNum, "highlight");
     var line = line.replace(",", "");
@@ -612,7 +710,10 @@ function parseASM(line, lineNum, elem, currStack, regStack) {
             parseRet(words, currStack, regStack, elem);
             break;
         case 8:
-            parseLeave(words, currStack, regStack, elem);
+            parseLeave(words, currStack, regStack);
+            break;
+        case 9:
+            parseLEA(words, currStack, regStack);
             break;
     }
 }

@@ -449,7 +449,7 @@ ret</code></pre>
             </div>
             <div class="row">
                 <div class="col-sm-8">
-                    <p>This leads us into the calling convection of x86 assembly called cdecl. The base of it is that all functions must have their parameters on the top of the stack before calling the function. If we look up we can see that the callee function takes two ints as parameters. You can see that before calle is called in assembly, the two instructions above it move integers to <b>esp+4</b> and <b>esp+0</b>. This is the same as pushing the ints one after the other since they would be on the same place on the stack. The reason they aren't is because some of the stack was already allocated so it's better to use the allocated space. The last thing to mention about cdecl is that the return data is always stored in <b>eax</b>.</p>
+                    <p>This leads us into the calling convection of x86 assembly called cdecl. The base of it is that all functions must have their parameters on the top of the stack before calling the function. If we look up we can see that the callee function takes two ints as parameters. You can see that before calle is called in assembly, the two instructions above it move integers to <b>esp+4</b> and <b>esp+0</b>. This is the same as pushing the ints one after the other since they would be on the same place on the stack. The reason they aren't pushed is because some of the stack was already allocated so it's better to use the allocated space. The <b>call</b> instruction, much like the leave instruction, is actually two instructions: <b>push eip</b> and <b>jmp FUNC</b>. There are two things to note. Firstly, the <b>push eip</b> actually pushed the address of the next instruction so that when we return to the original function we start executing at that instruction. Secondly, we haven't talked about the <b>jmp</b> instruction, but it's pretty simple. It just sets <b>eip</b> to the raw address or address of the label that it's given. The last thing to mention about cdecl is that the return data is always stored in <b>eax</b>.</p>
                 </div>
                 <div class="col-sm-4">
                     <pre><code class="x86asm">movl [esp+0x4], 0x28
@@ -506,26 +506,141 @@ main:
         </div>
     </div>
     </div>
-    <div class="row" id="buffer-overflows">
+    <div class="row bottom-pad" id="buffer-overflows">
         <h2 class="text-center"><b>Buffer Overflows</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
+            <h3 class="text-center">The Accident</h2>
+        <div class="row bottom-pad" id="assembly">
+            <div class="col-sm-3 col-sm-offset-3">
+                <pre><code class="language-cpp">   
+
+#include "string.h"
+#include "stdio.h"
+
+
+void mycpy(char* str)
+{
+    char foo[4];
+    strcyp(foo, str);
+}
+
+
+int main()
+{
+    mycpy("asu cse 340 fall 2015 rocks!");
+    printf("After");
+    return 0;
+}
+
+
+
+                </code></pre>
+            </div>
+            <div class="col-sm-3">
+                <pre><code class="x86asm hljs">mycpy: 
+    push ebp                    ;0x80483f4
+    mov ebp, esp                ;0x80483f5
+    sub esp, 0x28               ;0x80483f7
+    mov eax, [ebp+0x8]          ;0x80483fa
+    mov [esp+0x4], eax          ;0x80483fd
+    lea eax, [ebp-0xc]          ;0x8048401
+    mov [esp+0x0], eax          ;0x8048404
+    call strcpy                 ;0x8048407
+    leave                       ;0x804840c
+    ret                         ;0x804840d
+main:
+    push ebp                    ;0x804840e
+    mov ebp, esp                ;0x804840f
+    sub esp, 0x10               ;0x8048414
+    movl [esp+0x0], 0x8048504   ;0x8048417
+    call mycpy                  ;0x804841e
+    mov eax, 0x8048517          ;0x8048423
+    mov [esp+0x0], eax          ;0x8048428
+    call printf                 ;0x804842b
+    mov eax, 0x0                ;0x8048430
+    leave                       ;0x8048435
+    ret                         ;0x8048436</code></pre>
+            </div>
+        </div>
+        <div class="row bottom-pad">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>We already know what the assembly does, so let's talk about what a buffer overflow is and why or how it can occur. Think back to how function frames work. If a function is called it pushes the address of the next instruction and then the prologue of the called function pushes the <b>ebp</b>. The other important factor is local variables. Remember that local variables are stored on the stack as offsets of the <b>ebp</b>. The combination of these two things is what can lead to a classic buffer overflow. Looking at C code, the basic example is allocating a local buffer with some amount of space and then over filling it. Try and find the flaw in the above example and then try it below!</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="cpp">void mycpy(char* str)
+{
+    char foo[4];
+    strcyp(foo, str);
+}</code></pre></div>
+                </div>
+            </div>
+        </div>
+        <h3 class="text-center">Overflow Example</h3>
+    <div class="row bottom-pad">
+        <div class="col-sm-6 col-sm-offset-3 well">
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-3 bottom-pad">
+                    <h5 class="text-center">0xFFFFFFFF</h5>
+                    <div class="stack-loc" id="overflow-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                    <h5 class="text-center">0x00000000</h5>
+                </div>
+                <div class="col-sm-5" style="margin-top: 35px;">
+                    <div class="row">
+                        <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
+    push ebp                    ;0x80483f4
+    mov ebp, esp                ;0x80483f5
+    sub esp, 0x28               ;0x80483f7
+    mov eax, [ebp+0x8]          ;0x80483fa
+    mov [esp+0x4], eax          ;0x80483fd
+    lea eax, [ebp-0xc]          ;0x8048401
+    mov [esp+0x0], eax          ;0x8048404
+    call strcpy                 ;0x8048407
+    leave                       ;0x804840c
+    ret                         ;0x804840d
+main:
+    push ebp                    ;0x804840e
+    mov ebp, esp                ;0x804840f
+    sub esp, 0x10               ;0x8048414
+    movl [esp+0x0], 0x8048504   ;0x8048417
+    call mycpy                  ;0x804841e
+    mov eax, 0x8048517          ;0x8048423
+    mov [esp+0x0], eax          ;0x8048428
+    call printf                 ;0x804842b
+    mov eax, 0x0                ;0x8048430
+    leave                       ;0x8048435
+    ret                         ;0x8048436</code></pre>
+                        <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5" id="register-overflow-ex-stack">
+                    <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp eip</div>
+                    <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10004 0x100a0 0x804840e</div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+                <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
+            </div>
+        </div>
     </div>
-    <div class="row" id="shellcode">
-        <h2 class="text-center"><b>Shellcode</b></h1>
+        <div class="row" id="shellcode">
+            <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-    </div>
-    <div class="row" id="format-strings">
-        <h2 class="text-center"><b>Format Strings</b></h1>
+        </div>
+        <div class="row" id="format-strings">
+            <h2 class="text-center"><b>Format Strings</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-    </div>
-    <div class="row" id="rop">
-        <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
+        </div>
+        <div class="row" id="rop">
+            <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-    </div>
-    <div class="row" id="heap-exploit">
-        <h2 class="text-center"><b>Heap Exploitation</b></h1>
+        </div>
+        <div class="row" id="heap-exploit">
+            <h2 class="text-center"><b>Heap Exploitation</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-    </div>
+        </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

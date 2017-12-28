@@ -255,7 +255,7 @@ mov 0x8049634, eax</code></pre></div>
                 <div class="row">
                     <div class="col-sm-5 col-sm-offset-3 bottom-pad">
                         <h5 class="text-center">0xFFFFFFFF</h5>
-                        <div class="stack-loc" id="main-ex-stack">... &nbsp; &nbsp; &nbsp; ... Garbage</div>
+                        <div class="stack-loc" id="main-ex-stack">... &nbsp; &nbsp; ... Garbage</div>
                         <h5 class="text-center">0x00000000</h5>
                     </div>
                     <div class="col-sm-3" style="margin-top: 35px;">
@@ -349,11 +349,11 @@ movl [ebp-0x8], 0x64</code></pre>
                 <div class="row">
                     <div class="col-sm-5 col-sm-offset-3 bottom-pad">
                         <h5 class="text-center">0xFFFFFFFF</h5>
-                        <div class="stack-loc" id="local-var-ex-stack">... &nbsp; &nbsp; &nbsp; ... Garbage</div>
+                        <div class="stack-loc" id="local-var-ex-stack">..... &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
                         <h5 class="text-center">0x00000000</h5>
                     </div>
                     <div class="col-sm-4" style="margin-top: 35px;">
-                        <div class="row">   
+                        <div class="row">
                             <pre><code class="x86asm" id="local-var-ex-asm">mov ebp, esp
 sub esp, 0x10
 movl [ebp-0xc], 0xa
@@ -372,12 +372,139 @@ add [ebp-0xc], eax</code></pre>
                         <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10000 &nbsp;</div>
                     </div>
                 </div>
+                <div class="row" style="margin-top: 10px;">
+                    <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="assembly">
+            <h3 class="text-center">Function Frames and Calling Convention</h3>
+            <div class="col-sm-3 col-sm-offset-3">
+                <pre><code class="cpp">
+
+
+int callee(int a, int b)
+{
+    return a + b + 1;
+}
+
+
+
+int main()
+{
+    int a;
+    a = callee(10, 40);
+    return a;
+}
+
+
+
+
+</code></pre>
+            </div>
+            <div class="col-sm-3">
+                <pre><code class="x86asm hljs">callee:
+    push ebp                ;0x8048394
+    mov ebp, esp            ;0x8048395
+    mov eax, [ebp+0xc]      ;0x8048397
+    mov edx, [ebp+0x8]      ;0x804839a
+    add eax, edx            ;0x804839d
+    add eax, 0x1            ;0x80483a0
+    pop ebp                 ;0x80483a3
+    ret                     ;0x80483a4
+main:
+    push ebp                ;0x80483a5
+    mov ebp, esp            ;0x80483a6
+    sub esp, 0x18           ;0x80483a8
+    movl [esp+0x4], 0x28    ;0x80483ab
+    movl [esp+0x0], 0xa     ;0x80483b3
+    call callee             ;0x80483ba
+    mov [ebp-0x4], eax      ;0x80483bf
+    mov eax, [ebp-0x4]      ;0x80483c2
+    leave                   ;0x80483c5
+    ret                     ;0x80483c6</code></pre>
             </div>
         </div>
     </div>
-    <div class="row bottom-pad">
-        <div class="col-sm-3 col-sm-offset-3">
+    <div class="row" id="assembly">
+        <div class="col-sm-6 col-sm-offset-3">
+            <div class="row">
+                <div class="col-sm-8">
+                    <p>We've already talked a little about what function frames are, so let's complete our understanding. To the right is what's known as the prologue of a function frame. The first thing that's always done is the <b>ebp</b> is pushed to the stack. This saves the previous function's <b>Frame Pointer</b> so that when it is returned to it knows where the start of it's stack is and it's local variables and memory can be accessed. The next operation that is essential is the <b>esp</b> is moved into the <b>ebp</b>. This essentially moves the <b>ebp</b> from the start of the stack to where the <b>esp</b> currently points to. This is to start a new function frame. The next step is only necessary for function frames that require space on the stack. The <b>sub</b> of some amount from <b>esp</b> allocates memory on the stack by creating space between <b>ebp</b> and <b>esp</b>.</p>
+                </div>
+                <div class="col-sm-4">
+                    <pre><code class="x86asm">push ebp
+mov ebp, esp
+sub esp, 0x18</code></pre>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <p>These two instructions are what's known as the epilogue of the function frame. The <b>leave</b> instruction is actually a combination of two instructions: <b>mov esp, ebp</b> and <b>pop ebp</b>. Moving <b>ebp</b> into <b>esp</b> essentially deletes the previously allocated stack. Now, the stack pointer is where the previous saved base pointer is. That is, where <b>ebp</b> was originally pushed in the The other instruction, <b>ret</b>, is actually an alias for <b>pop eip</b>. What's the <b>eip</b>? The <b>eip</b> is what's known as the instruction pointer. It's job is to move to the next instruction. The <b>eip</b> can't be directly effected by <b>pop</b>s which is why <b>ret</b> is used instead. If you look at the above example, the comments next to each line is the address of the instruction. The <b>eip</b> loads the next address of each instruction to ready it for execution.</p>
+                </div>
+                <div class="col-sm-4">
+                    <pre><code class="x86asm">leave
+ret</code></pre>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-8">
+                    <p>This leads us into the calling convection of x86 assembly called cdecl. The base of it is that all functions must have their parameters on the top of the stack before calling the function. If we look up we can see that the callee function takes two ints as parameters. You can see that before calle is called in assembly, the two instructions above it move integers to <b>esp+4</b> and <b>esp+0</b>. This is the same as pushing the ints one after the other since they would be on the same place on the stack. The reason they aren't is because some of the stack was already allocated so it's better to use the allocated space. The last thing to mention about cdecl is that the return data is always stored in <b>eax</b>.</p>
+                </div>
+                <div class="col-sm-4">
+                    <pre><code class="x86asm">movl [esp+0x4], 0x28
+movl [esp+0x0], 0xa
+call callee</code></pre>
+                </div>
+            </div>
         </div>
+    </div>
+    <h3 class="text-center">Calling Convention Example</h3>
+    <div class="row bottom-pad">
+        <div class="col-sm-6 col-sm-offset-3 well">
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-3 bottom-pad">
+                    <h5 class="text-center">0xFFFFFFFF</h5>
+                    <div class="stack-loc" id="call-conv-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                    <h5 class="text-center">0x00000000</h5>
+                </div>
+                <div class="col-sm-5" style="margin-top: 35px;">
+                    <div class="row">
+                        <pre><code class="x86asm" id="call-conv-ex-asm">callee:
+    push ebp                ;0x8048394
+    mov ebp, esp            ;0x8048395
+    mov eax, [ebp+0xc]      ;0x8048397
+    mov edx, [ebp+0x8]      ;0x804839a
+    add eax, edx            ;0x804839d
+    add eax, 0x1            ;0x80483a0
+    pop ebp                 ;0x80483a3
+    ret                     ;0x80483a4
+main:
+    push ebp                ;0x80483a5
+    mov ebp, esp            ;0x80483a6
+    sub esp, 0x18           ;0x80483a8
+    movl [esp+0x4], 0x28    ;0x80483ab
+    movl [esp+0x0], 0xa     ;0x80483b3
+    call callee             ;0x80483ba
+    mov [ebp-0x4], eax      ;0x80483bf
+    mov eax, [ebp-0x4]      ;0x80483c2
+    leave                   ;0x80483c5
+    ret                     ;0x80483c6</code></pre>
+                        <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="call-conv-test-button">Start</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-5" id="register-call-conv-ex-stack">
+                    <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax edx esp ebp eip</div>
+                    <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; &nbsp; 0x10004 0x100a0 0x80483a5</div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px;">
+                <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
+            </div>
+        </div>
+    </div>
     </div>
     <div class="row" id="buffer-overflows">
         <h2 class="text-center"><b>Buffer Overflows</b></h1>

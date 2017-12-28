@@ -23,7 +23,7 @@ function makeStack(elem) {
         node.className += "row text-center center-block border";
 
         var para = document.createElement("p");
-        para.style.marginTop = "10%";
+        para.style.marginTop = "5%";
         var text = document.createTextNode(vals[i]);
         para.appendChild(text);
 
@@ -60,7 +60,7 @@ $("#stack-test-button").click(function() {
     } else {
         this.textContent = "Next";
         var lines = elem.textContent.split('\n');
-        var currLine = getLineNumber(elem);
+        var currLine = getLineNumber(elem)[0];
 
         if (currLine < lines.length) {
             parseASM(lines[currLine], currLine, elem, currStack, regStack);
@@ -97,10 +97,84 @@ $("#local-var-test-button").click(function() {
     } else {
         this.textContent = "Next";
         var lines = elem.textContent.split('\n');
-        var currLine = getLineNumber(elem);
+        var currLine = getLineNumber(elem)[0];
 
         if (currLine < lines.length) {
             parseASM(lines[currLine], currLine, elem, currStack, regStack);
+            if (currLine == lines.length - 1) {
+                $(this).removeClass('btn-success');
+                $(this).addClass('btn-danger');
+                this.textContent = "Restart";
+            }
+        }
+    }
+});
+
+$("#call-conv-test-button").click(function() {
+    var elem = document.getElementById("call-conv-ex-asm");
+    var currStack = document.getElementById("call-conv-ex-stack");
+    var regStack = document.getElementById("register-call-conv-ex-stack");
+
+    if ($(this).hasClass('btn-danger')) {
+        $(this).removeClass('btn-danger');
+        $(this).addClass('btn-success');
+        this.textContent = "Start";
+
+        removeHighlight(elem, "highlight");
+        removeHighlight(currStack, "highlight");
+
+        removeHighlight(currStack, "ebp");
+        regStack.children[1].children[0].children[0].textContent = " ";
+        regStack.children[1].children[1].children[0].textContent = " ";
+        regStack.children[1].children[2].children[0].textContent = "0x10004";
+        regStack.children[1].children[3].children[0].textContent = "0x100a0";
+        regStack.children[1].children[4].children[0].textContent = "0x80483a5";
+        for (var i = 0; i < currStack.children.length; i++) {
+        	currStack.children[i].children[0].textContent =  " ";
+        }
+
+    } else {
+        this.textContent = "Next";
+        var lines = elem.textContent.split('\n');
+        var result = getLineNumber(elem);
+        var currLine = result[0];
+
+        if (currLine == 0 && !result[1]) {
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf("main:") > -1) {
+                    currLine = i + 1;
+                    break;
+                }
+            }
+        }
+        if (lines[currLine - 1].indexOf("call") > -1) {
+            currLine = 1;
+        }
+        if (lines[currLine - 1].indexOf("ret") > -1) {
+            var result = parseRegStack(regStack);
+
+            var regs = result[0];
+            var vals = result[1];
+            var ebp = vals[regs.indexOf("eip")];
+            for (var i = 0; i < lines.length; i++) {
+                if (lines[i].indexOf(":") < 0) {
+                    var addr = (lines[i].split(";")[1]);
+                    if (addr === ebp) {
+                        currLine = i;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (currLine < lines.length) {
+            if (currLine != lines.length - 1 || lines[currLine].indexOf("ret") < 0) {
+                parseASM(lines[currLine], currLine, elem, currStack, regStack);
+            } else {
+                removeHighlight(elem, "highlight");
+                highlightText(elem, currLine, "highlight");
+            }
+
             if (currLine == lines.length - 1) {
                 $(this).removeClass('btn-success');
                 $(this).addClass('btn-danger');
@@ -168,10 +242,10 @@ function getLineNumber(code) {
     inner = code.innerHTML.split('\n');
     for (var i = 0; i < inner.length; i++) {
         if (inner[i].indexOf('class="highlight"') > -1) {
-            return i + 1;
+            return [i + 1, true];
         }
     }
-    return 0;
+    return [0, false];
 }
 
 
@@ -247,12 +321,50 @@ function updateRegister(regStack, inc, val, regName) {
 
 }
 
-function getEBPBlock(currVal, ref, currStack) {
+
+function getBlock(currVal, ref, currStack) {
     var updateVal = parseInt(currVal);
-    var offset = parseInt(ref.replace('[', '').replace(']', '').split('-')[1]);
+    if (ref.indexOf('-') > -1) {
+        var offset = parseInt(ref.replace('[', '').replace(']', '').split('-')[1]);
+
+    } else {
+        var offset = -1 * parseInt(ref.replace('[', '').replace(']', '').split('+')[1]);
+
+    }
     var idx = (0x10000 - (updateVal - offset)) / 4;
+
     var child = currStack.children[idx].children[0];
     return child;
+}
+
+function parseLeave(words, currStack, regStack, elem) {
+    parseMov("mov esp ebp".split(" "), currStack, regStack);
+    parsePop("pop ebp".split(" "), currStack, regStack);
+}
+
+function parseRet(words, currStack, regStack, elem) {
+    var code = elem.textContent.split('\n');
+    parsePop("pop eip".split(" "), currStack, regStack);
+}
+
+function parseCall(words, currStack, regStack, elem) {
+    var code = elem.textContent.split('\n');
+    var index = 0;
+    var label = 0;
+    for (var i = 0; i < code.length; i++) {
+        if (code[i].indexOf(words[1]) == 0) {
+            label = i;
+        }
+        var text = code[i].trim().split(" ");
+        if (text[1] === words[1]) {
+            index = i + 1;
+        }
+    }
+    var val = parseInt(code[index].replace(" ", "").split(";")[1]);
+    updateRegister(regStack, false, val, "eip");
+    parsePush("push eip".split(" "), currStack, regStack);
+    val = parseInt(code[index - 1].replace(" ", "").split(";")[1]);
+    updateRegister(regStack, false, val, "eip");
 }
 
 function parseSub(words, currStack, regStack) {
@@ -267,10 +379,10 @@ function parseSub(words, currStack, regStack) {
     if (regIdx > -1) {
         updateRegister(regStack, true, -val, regs[regIdx]);
         if (regs[regIdx] === "esp") {
+            removeHighlight(currStack, "highlight");
             var updateVal = vals[regIdx] - val;
             var idx = (0x10000 - updateVal) / 4;
             var child = currStack.children[idx].children[0];
-
             highlightText(child, 0, "highlight");
         }
     }
@@ -291,14 +403,20 @@ function parseAdd(words, currStack, regStack) {
     var reg2Idx = regs.indexOf(words[2]);
 
     if (!isOffset) {
-
+        if (reg1Idx > -1 && reg2Idx > -1) {
+            var updateVal = parseInt(vals[reg2Idx]);
+            updateRegister(regStack, true, updateVal, regs[reg1Idx]);
+        } else if (reg1Idx > -1 && reg2Idx < 0) {
+            var updateVal = parseInt(words[2]);
+            updateRegister(regStack, true, updateVal, regs[reg1Idx]);
+        }
     } else {
         if (words[2].indexOf("[") > -1) {
             isOffset = false;
         }
         if (isOffset) {
             if (reg2Idx > -1) {
-                var child = getEBPBlock(vals[regs.indexOf("ebp")], words[1], currStack);
+                var child = getBlock(vals[regs.indexOf("ebp")], words[1], currStack);
 
                 var sum = parseInt(child.textContent) + parseInt(vals[reg2Idx]);
                 child.textContent = "0x" + sum.toString(16).replace('0x', '');
@@ -322,14 +440,22 @@ function parseMov(words, currStack, regStack) {
     var reg2Idx = regs.indexOf(words[2]);
 
     if (!isOffset) {
+
         if (reg1Idx > -1 && reg2Idx > -1) {
-            var updateVal = vals[reg2Idx];
+            var updateVal = parseInt(vals[reg2Idx]);
             updateRegister(regStack, false, updateVal, regs[reg1Idx]);
             if (words[1] === "ebp") {
+                removeHighlight(currStack, "ebp");
                 var idx = (0x10000 - updateVal) / 4;
                 var child = currStack.children[idx].children[0];
 
                 highlightText(child, 0, "ebp");
+            } else if (words[1] === "esp") {
+                removeHighlight(currStack, "highlight");
+                var idx = (0x10000 - updateVal) / 4;
+                var child = currStack.children[idx].children[0];
+                console.log(child);
+                highlightText(child, 0, "highlight");
             }
 
         } else if (reg1Idx > -1 && reg2Idx < 0) {
@@ -343,20 +469,42 @@ function parseMov(words, currStack, regStack) {
         if (words[2].indexOf("[") > -1) {
             isOffset = false;
         }
-        if (isOffset) {
-            var child = getEBPBlock(vals[regs.indexOf("ebp")], words[1], currStack);
 
-            var sum = parseInt
-            if (reg2Idx > -1) {
-                child.textContent = vals[reg2Idx];
-            } else {
-                child.textContent = words[2];
+        if (isOffset) {
+            if (words[1].indexOf("ebp") > -1) {
+                var child = getBlock(vals[regs.indexOf("ebp")], words[1], currStack);
+                var sum = parseInt
+                if (reg2Idx > -1) {
+                    child.textContent = vals[reg2Idx];
+                } else {
+                    child.textContent = words[2];
+                }
+            } else if (words[1].indexOf("esp") > -1) {
+                var child = getBlock(vals[regs.indexOf("esp")], words[1], currStack);
+                var sum = parseInt
+                if (reg2Idx > -1) {
+                    child.textContent = vals[reg2Idx];
+                } else {
+                    child.textContent = words[2];
+                    var ref = parseInt(words[1].replace('[', '').replace(']', '').split('+')[1]);
+                    if (ref == 0) {
+                        highlightText(child, 0, "highlight");
+                    }
+                }
             }
         } else {
-            var child = getEBPBlock(vals[regs.indexOf("ebp")], words[2], currStack);
-            if (reg1Idx > -1) {
-                updateVal = parseInt(child.textContent);
-                updateRegister(regStack, false, updateVal, words[1]);
+            if (words[2].indexOf("ebp") > -1) {
+                var child = getBlock(vals[regs.indexOf("ebp")], words[2], currStack);
+                if (reg1Idx > -1) {
+                    updateVal = parseInt(child.textContent);
+                    updateRegister(regStack, false, updateVal, words[1]);
+                }
+            } else if (words[2].indexOf("esp") > -1) {
+                var child = getBlock(vals[regs.indexOf("esp")], words[2], currStack);
+                if (reg1Idx > -1) {
+                    updateVal = parseInt(child.textContent);
+                    updateRegister(regStack, false, updateVal, words[1]);
+                }
             }
         }
     }
@@ -371,7 +519,8 @@ function parsePush(words, currStack, regStack) {
 
     var idx = regs.indexOf(words[1]);
     var stackVals = findCurrStackBlock(currStack);
-    var elem = stackVals[0];
+    var elem = getBlock(vals[regs.indexOf("esp")], "esp-4", currStack);
+    //var elem = stackVals[0];
     if (elem != -1) {
         if (idx > -1) {
             elem.textContent = vals[idx];
@@ -379,7 +528,8 @@ function parsePush(words, currStack, regStack) {
             elem.textContent = words[1];
         }
         if (stackVals.length > 1) {
-            removeHighlight(stackVals[1], "highlight");
+            var prevElem = getBlock(vals[regs.indexOf("esp")], "esp+0", currStack);
+            removeHighlight(prevElem, "highlight");
         }
         highlightText(elem, 0, "highlight");
 
@@ -396,19 +546,29 @@ function parsePop(words, currStack, regStack) {
 
     var idx = regs.indexOf(words[1]);
     var stackVals = findCurrStackBlock(currStack);
-    var elem = stackVals[1];
+    var elem = getBlock(vals[regs.indexOf("esp")], "esp+0", currStack);
+    //var elem = stackVals[1];
+
     if (elem != -1) {
+        var updateVal = parseInt(elem.textContent);
         if (idx > -1) {
-            var updateVal = parseInt(elem.textContent);
-            updateRegister(regStack, false, updateVal, "ebx")
+            console.log(updateVal.toString(16));
+            updateRegister(regStack, false, updateVal, regs[idx])
             elem.textContent = " ";
         }
 
         if (stackVals.length > 1) {
             removeHighlight(elem, "highlight");
         }
-        stackVals = findCurrStackBlock(currStack);
-        highlightText(stackVals[1], 0, "highlight");
+
+        var prevElem = getBlock(vals[regs.indexOf("esp")], "esp+4", currStack);
+        highlightText(prevElem, 0, "highlight");
+
+        if (regs[idx] === "ebp") {
+            removeHighlight(elem, "ebp");
+            var newElem = getBlock(updateVal, "ebp+0", currStack);
+            highlightText(newElem, 0, "ebp");
+        }
 
         updateRegister(regStack, true, 4, "esp");
     }
@@ -416,11 +576,16 @@ function parsePop(words, currStack, regStack) {
 
 //This is the parser for the x86 Stack
 function parseASM(line, lineNum, elem, currStack, regStack) {
-    var keywords = ["mov", "push", "pop", "movl", "sub", "add"];
+    var keywords = ["mov", "push", "pop", "movl", "sub", "add", "call", "ret", "leave"];
     removeHighlight(elem, "highlight");
     highlightText(elem, lineNum, "highlight");
     var line = line.replace(",", "");
-    var words = line.split(" ");
+    var words = line.trim().split(" ");
+    if (line.indexOf(";") > -1) {
+        var addr = parseInt(line.split(";")[1].replace(" ", ""));
+        updateRegister(regStack, false, addr, "eip")
+    }
+
     switch (keywords.indexOf(words[0])) {
         case 0:
             parseMov(words, currStack, regStack);
@@ -439,6 +604,15 @@ function parseASM(line, lineNum, elem, currStack, regStack) {
             break;
         case 5:
             parseAdd(words, currStack, regStack);
+            break;
+        case 6:
+            parseCall(words, currStack, regStack, elem);
+            break;
+        case 7:
+            parseRet(words, currStack, regStack, elem);
+            break;
+        case 8:
+            parseLeave(words, currStack, regStack, elem);
             break;
     }
 }

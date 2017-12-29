@@ -565,7 +565,7 @@ main:
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="row">
                     <div class="col-sm-8">
-                        <p>We already know what the assembly does, so let's talk about what a buffer overflow is and why or how it can occur. Think back to how function frames work. If a function is called it pushes the address of the next instruction and then the prologue of the called function pushes the <b>ebp</b>. The other important factor is local variables. Remember that local variables are stored on the stack as offsets of the <b>ebp</b>. The combination of these two things is what can lead to a classic buffer overflow. Looking at C code, the basic example is allocating a local buffer with some amount of space and then over filling it. Try and find the flaw in the above example and then try it below!</p>
+                        <p>We already know what the assembly does, so let's talk about what a buffer overflow is and why or how it can occur. Think back to how function frames work. If a function is called it pushes the address of the next instruction and then the prologue of the called function pushes the <b>ebp</b>. The other important factor is local variables. Remember that local variables are stored on the stack as offsets of the <b>ebp</b>. The combination of these two things is what can lead to a classic buffer overflow. Looking at C code, the basic example is allocating a local buffer with some amount of space and then over filling it. Find the flaw in the above code example and then try it below!</p>
                     </div>
                     <div class="col-sm-4">
                         <pre><code class="cpp">void mycpy(char* str)

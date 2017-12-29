@@ -220,7 +220,7 @@ $("#overflow-test-button").click(function() {
                 }
             }
         }
-        if (lines[currLine - 1].indexOf("call") > -1) {
+        if (lines[currLine - 1].indexOf("call") > -1 && lines[currLine - 1].indexOf("strcpy") < 0) {
             currLine = 1;
         }
         if (lines[currLine - 1].indexOf("ret") > -1) {
@@ -309,6 +309,15 @@ $(".nav li a").on('click', function(event) {
         });
     }
 });
+
+function sleep(milliseconds) {
+	var start = new Date().getTime();
+	for (var i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds) {
+			break;
+		}
+	}
+}
 
 function getLineNumber(code) {
     inner = code.innerHTML.split('\n');
@@ -410,7 +419,27 @@ function getBlock(currVal, ref, currStack) {
 }
 
 function parseStrCpy(words, currStack, regStack) {
+    var result = parseRegStack(regStack);
 
+    var regs = result[0];
+    var vals = result[1];
+	var currVal = vals[regs.indexOf("esp")];
+	var param1 = getBlock(currVal, "esp+0", currStack);
+	var param2 = getBlock(currVal, "esp+4", currStack);
+	var buffAddr = vals[regs.indexOf("eax")];
+
+
+	if (param2.textContent === "0x8048504") {
+		var cseStr = "asu cse 340 fall 2015 rocks!"
+		for (var i = 0; i < cseStr.length; i+=4) {
+			var subStr = '"' + cseStr.substring(i, i+4) + '"';
+			var currBlock = getBlock(buffAddr, "esp+" + i, currStack);
+			while (currBlock.children.length > 0) {
+				currBlock = currBlock.children[currBlock.children.length - 1];
+			}
+			currBlock.textContent = subStr;
+		}
+	}
 }
 
 function parseLEA(words, currStack, regStack) {
@@ -438,7 +467,8 @@ function parseRet(words, currStack, regStack, elem) {
 }
 
 function parseCall(words, currStack, regStack, elem) {
-    if (words[0] === "strcpy") {
+	console.log(words[0]);
+    if (words[1] === "strcpy") {
         parseStrCpy(words, currStack, regStack);
     } else {
         var code = elem.textContent.split('\n');
@@ -644,13 +674,25 @@ function parsePop(words, currStack, regStack) {
 
     var idx = regs.indexOf(words[1]);
     var stackVals = findCurrStackBlock(currStack);
+    console.log(vals[regs.indexOf("esp")]);
     var elem = getBlock(vals[regs.indexOf("esp")], "esp+0", currStack);
     //var elem = stackVals[1];
 
     if (elem != -1) {
         var updateVal = parseInt(elem.textContent);
+        console.log(updateVal);
         if (idx > -1) {
             console.log(updateVal.toString(16));
+            if (isNaN(updateVal)) {
+            	console.log("HELLO");
+            	var tempStr = "0x"
+            	console.log(elem);
+            	for (var i = elem.textContent.length - 1; i > 1; i--) {
+            		tempStr += elem.textContent.charCodeAt(i).toString(16);
+            		console.log(tempStr);
+            	}
+            	updateVal = parseInt(tempStr);
+            }
             updateRegister(regStack, false, updateVal, regs[idx])
             elem.textContent = " ";
         }
@@ -658,7 +700,6 @@ function parsePop(words, currStack, regStack) {
         if (stackVals.length > 1) {
             removeHighlight(elem, "highlight");
         }
-
         var prevElem = getBlock(vals[regs.indexOf("esp")], "esp+4", currStack);
         highlightText(prevElem, 0, "highlight");
 

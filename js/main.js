@@ -24,7 +24,7 @@ function makeStack(elem) {
 
         var para = document.createElement("p");
         para.style.marginTop = "5%";
-        para.style.fontSize = "80%";
+        para.style.fontSize = "100%";
         var text = document.createTextNode(vals[i]);
         para.appendChild(text);
 

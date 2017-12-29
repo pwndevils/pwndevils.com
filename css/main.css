@@ -175,6 +175,21 @@ h3 {
     h3{font-size: 14px;}
 }
 
+@media only screen and (max-width: 500px) {
+    .mobile-margin-left {
+        margin-left: 5%;
+    }
+    .mobile-margin-right {
+        margin-right: 5%;
+    }
+
+    .mobile-margin-left-small {
+        margin-left: 2%;
+    }
+    .mobile-margin-right-small {
+        margin-right: 2%;
+    }
+}
 
 
 #top-bar {

@@ -251,7 +251,7 @@ mov 0x8049634, eax</code></pre></div>
                     <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4. Take note, that the stack starts at high memory addresses and grows to low memory address. Our starting value here is at 0x10000 as shown in the bottom left. When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case). Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
                 </div>
             </div>
-            <div class="col-sm-4 well" style="margin-left: 3%;">
+            <div class="col-sm-4 well mobile-margin-left mobile-margin-right">
                 <div class="row">
                     <div class="col-sm-5 col-sm-offset-3 bottom-pad">
                         <h5 class="text-center">0xFFFFFFFF</h5>
@@ -306,11 +306,11 @@ pop ebx</code></pre>
         add [ebp-0xc], eax
         </code></pre>
             </div>
-            <div class="col-sm-1 well stack-loc">0x41273333 0x64 0xa ???? ???? ????</div>
+            <div class="col-sm-1 well stack-loc mobile-margin-left mobile-margin-right">0x41273333 0x64 0xa ???? ???? ????</div>
             <div class="col-sm-1 text-center">
                 <p style="font-size: 5.4em;">&rarr;</p>
             </div>
-            <div class="col-sm-1 well stack-loc">0x41273333 0x64 0x6e ???? ???? ????</div>
+            <div class="col-sm-1 well stack-loc mobile-margin-left mobile-margin-right">0x41273333 0x64 0x6e ???? ???? ????</div>
         </div>
         <div class="row" id="assembly">
             <div class="col-sm-6 col-sm-offset-3">
@@ -344,7 +344,7 @@ movl [ebp-0x8], 0x64</code></pre>
             </div>
         </div>
         <h3 class="text-center">Local Variable Example</h3>
-        <div class="row bottom-pad">
+        <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
             <div class="col-sm-4 col-sm-offset-4 well">
                 <div class="row">
                     <div class="col-sm-5 col-sm-offset-3 bottom-pad">
@@ -426,7 +426,7 @@ main:
             </div>
         </div>
     </div>
-    <div class="row" id="assembly">
+    <div class="row mobile-margin-left-small mobile-margin-right-small" id="assembly">
         <div class="col-sm-6 col-sm-offset-3">
             <div class="row">
                 <div class="col-sm-8">
@@ -460,7 +460,7 @@ call callee</code></pre>
         </div>
     </div>
     <h3 class="text-center">Calling Convention Example</h3>
-    <div class="row bottom-pad">
+    <div class="row bottom-pad mobile-margin-left mobile-margin-right">
         <div class="col-sm-6 col-sm-offset-3 well">
             <div class="row">
                 <div class="col-sm-4 col-sm-offset-3 bottom-pad">
@@ -506,7 +506,7 @@ main:
         </div>
     </div>
     </div>
-    <div class="row bottom-pad" id="buffer-overflows">
+    <div class="row bottom-pad bottom-pad mobile-margin-left mobile-margin-right" id="buffer-overflows">
         <h2 class="text-center"><b>Buffer Overflows</b></h1>
             <h3 class="text-center">The Accident</h2>
         <div class="row bottom-pad" id="assembly">
@@ -577,7 +577,7 @@ main:
             </div>
         </div>
         <h3 class="text-center">Overflow Example</h3>
-        <div class="row bottom-pad">
+        <div class="row bottom-pad bottom-pad mobile-margin-left-small mobile-margin-right-small">
             <div class="col-sm-6 col-sm-offset-3 well">
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-3 bottom-pad">

@@ -577,17 +577,17 @@ main:
             </div>
         </div>
         <h3 class="text-center">Overflow Example</h3>
-    <div class="row bottom-pad">
-        <div class="col-sm-6 col-sm-offset-3 well">
-            <div class="row">
-                <div class="col-sm-4 col-sm-offset-3 bottom-pad">
-                    <h5 class="text-center">0xFFFFFFFF</h5>
-                    <div class="stack-loc" id="overflow-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-                    <h5 class="text-center">0x00000000</h5>
-                </div>
-                <div class="col-sm-5" style="margin-top: 35px;">
-                    <div class="row">
-                        <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
+        <div class="row bottom-pad">
+            <div class="col-sm-6 col-sm-offset-3 well">
+                <div class="row">
+                    <div class="col-sm-4 col-sm-offset-3 bottom-pad">
+                        <h5 class="text-center">0xFFFFFFFF</h5>
+                        <div class="stack-loc" id="overflow-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                        <h5 class="text-center">0x00000000</h5>
+                    </div>
+                    <div class="col-sm-5" style="margin-top: 35px;">
+                        <div class="row">
+                            <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
     push ebp                    ;0x80483f4
     mov ebp, esp                ;0x80483f5
     sub esp, 0x28               ;0x80483f7
@@ -610,37 +610,46 @@ main:
     mov eax, 0x0                ;0x8048430
     leave                       ;0x8048435
     ret                         ;0x8048436</code></pre>
-                        <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
+                            <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
+                            <p class="text-center hidden" id="segfault-overflow" style="color: red;"><b>SEGFAULT: INVALID EIP</b></p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-5" id="register-overflow-ex-stack">
-                    <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp eip</div>
-                    <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10004 0x100a0 0x804840e</div>
+                <div class="row">
+                    <div class="col-sm-5" id="register-overflow-ex-stack">
+                        <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp eip</div>
+                        <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10004 0x100a0 0x804840e</div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top: 10px;">
+                    <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
                 </div>
             </div>
-            <div class="row" style="margin-top: 10px;">
-                <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
-            </div>
+        </div>
+    <div class="row bottom-pad">
+        <div class="col-sm-6 col-sm-offset-3">
+            <p>As the text at the end of the example states, there would be a segfault when the program returns. Why? It's actually pretty easy to understand. When the program calls <b>strcpy</b> it writes the string to the specified location on the stack which happens to be <b>ebp-0xc</b> which is also <b>0xffdc</b>. However, the string that's written to that location is much larger than four characters. This doesn't stop <b>strcpy</b> though. There's nothing that tells it not to write the entire string so it does. In the process, it overwrites what was previously on the stack. If you look at what is on the stack when strcpy is called you will see the <b>saved ebp</b> directly above where the <b>ebp</b> register points to. The <b>saved ebp</b> is the value of <b>ebp</b> from the previous function. Directly above that is what's called the <b>saved eip</b> which is the address of the instruction that we should return to when we finish this function.</p>
+            <p>Now, when <b>strcpy</b> is called look at what happens to those values. They get completely overwritten by the contents of the string. Watch what happens when <b>leave</b> and <b>ret</b> are called. The value that is in <b>ebp</b> when leave is called is actually the little-endian value of the ascii in that location. The same is true of <b>eip</b> when <b>ret</b> is called. This means that the <b>eip</b> tries to go to the location of the instruction that is actually the little-endian ascii characters which is definitely not a valid address.</p>
+            <p><b>P.S.</b> In x86, all values are actually little endian which means the most significant byte is actually the least significat byte.  For example: the value of the string "step" is 0x73746570 to make this little-endian just reverse the byte order so it becomes 0x70657473.</p>
         </div>
     </div>
-        <div class="row" id="shellcode">
-            <h2 class="text-center"><b>Shellcode</b></h1>
+    </div>
+    <div class="row" id="shellcode">
+        <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
-        <div class="row" id="format-strings">
-            <h2 class="text-center"><b>Format Strings</b></h1>
+    </div>
+    <div class="row" id="format-strings">
+        <h2 class="text-center"><b>Format Strings</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
-        <div class="row" id="rop">
-            <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
+    </div>
+    <div class="row" id="rop">
+        <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
-        <div class="row" id="heap-exploit">
-            <h2 class="text-center"><b>Heap Exploitation</b></h1>
+    </div>
+    <div class="row" id="heap-exploit">
+        <h2 class="text-center"><b>Heap Exploitation</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
-        </div>
+    </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>

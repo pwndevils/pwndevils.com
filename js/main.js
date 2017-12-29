@@ -24,6 +24,7 @@ function makeStack(elem) {
 
         var para = document.createElement("p");
         para.style.marginTop = "5%";
+        para.style.fontSize = "80%";
         var text = document.createTextNode(vals[i]);
         para.appendChild(text);
 
@@ -188,7 +189,10 @@ $("#overflow-test-button").click(function() {
     var elem = document.getElementById("overflow-ex-asm");
     var currStack = document.getElementById("overflow-ex-stack");
     var regStack = document.getElementById("register-overflow-ex-stack");
+    var segText = document.getElementById("segfault-overflow");
 
+    if (!segText.classList.contains("hidden"))
+        segText.classList.add("hidden");
     if ($(this).hasClass('btn-danger')) {
         $(this).removeClass('btn-danger');
         $(this).addClass('btn-success');
@@ -199,13 +203,12 @@ $("#overflow-test-button").click(function() {
 
         removeHighlight(currStack, "ebp");
         regStack.children[1].children[0].children[0].textContent = " ";
-        regStack.children[1].children[2].children[0].textContent = "0x10004";
-        regStack.children[1].children[3].children[0].textContent = "0x100a0";
-        regStack.children[1].children[4].children[0].textContent = "0x804840e";
+        regStack.children[1].children[1].children[0].textContent = "0x10004";
+        regStack.children[1].children[2].children[0].textContent = "0x100a0";
+        regStack.children[1].children[3].children[0].textContent = "0x804840e";
         for (var i = 0; i < currStack.children.length; i++) {
             currStack.children[i].children[0].textContent = " ";
         }
-
     } else {
         this.textContent = "Next";
         var lines = elem.textContent.split('\n');
@@ -241,17 +244,14 @@ $("#overflow-test-button").click(function() {
         }
 
         if (currLine < lines.length) {
-            if (currLine != lines.length - 1 || lines[currLine].indexOf("ret") < 0) {
+            if (lines[currLine - 1].indexOf("ret") < 0) {
                 parseASM(lines[currLine], currLine, elem, currStack, regStack);
             } else {
-                removeHighlight(elem, "highlight");
-                highlightText(elem, currLine, "highlight");
-            }
-
-            if (currLine == lines.length - 1) {
                 $(this).removeClass('btn-success');
                 $(this).addClass('btn-danger');
                 this.textContent = "Restart";
+                segText.classList.remove("hidden");
+
             }
         }
     }
@@ -309,15 +309,6 @@ $(".nav li a").on('click', function(event) {
         });
     }
 });
-
-function sleep(milliseconds) {
-	var start = new Date().getTime();
-	for (var i = 0; i < 1e7; i++) {
-		if ((new Date().getTime() - start) > milliseconds) {
-			break;
-		}
-	}
-}
 
 function getLineNumber(code) {
     inner = code.innerHTML.split('\n');
@@ -414,6 +405,7 @@ function getBlock(currVal, ref, currStack) {
     }
     var idx = (0x10000 - (updateVal - offset)) / 4;
 
+
     var child = currStack.children[idx].children[0];
     return child;
 }
@@ -423,23 +415,23 @@ function parseStrCpy(words, currStack, regStack) {
 
     var regs = result[0];
     var vals = result[1];
-	var currVal = vals[regs.indexOf("esp")];
-	var param1 = getBlock(currVal, "esp+0", currStack);
-	var param2 = getBlock(currVal, "esp+4", currStack);
-	var buffAddr = vals[regs.indexOf("eax")];
+    var currVal = vals[regs.indexOf("esp")];
+    var param1 = getBlock(currVal, "esp+0", currStack);
+    var param2 = getBlock(currVal, "esp+4", currStack);
+    var buffAddr = vals[regs.indexOf("eax")];
 
 
-	if (param2.textContent === "0x8048504") {
-		var cseStr = "asu cse 340 fall 2015 rocks!"
-		for (var i = 0; i < cseStr.length; i+=4) {
-			var subStr = '"' + cseStr.substring(i, i+4) + '"';
-			var currBlock = getBlock(buffAddr, "esp+" + i, currStack);
-			while (currBlock.children.length > 0) {
-				currBlock = currBlock.children[currBlock.children.length - 1];
-			}
-			currBlock.textContent = subStr;
-		}
-	}
+    if (param2.textContent === "0x8048504") {
+        var cseStr = "asu cse 340 fall 2015 rocks!"
+        for (var i = 0; i < cseStr.length; i += 4) {
+            var subStr = '"' + cseStr.substring(i, i + 4) + '"';
+            var currBlock = getBlock(buffAddr, "esp+" + i, currStack);
+            while (currBlock.children.length > 0) {
+                currBlock = currBlock.children[currBlock.children.length - 1];
+            }
+            currBlock.textContent = subStr;
+        }
+    }
 }
 
 function parseLEA(words, currStack, regStack) {
@@ -467,7 +459,7 @@ function parseRet(words, currStack, regStack, elem) {
 }
 
 function parseCall(words, currStack, regStack, elem) {
-	console.log(words[0]);
+
     if (words[1] === "strcpy") {
         parseStrCpy(words, currStack, regStack);
     } else {
@@ -578,7 +570,7 @@ function parseMov(words, currStack, regStack) {
                 removeHighlight(currStack, "highlight");
                 var idx = (0x10000 - updateVal) / 4;
                 var child = currStack.children[idx].children[0];
-                console.log(child);
+
                 highlightText(child, 0, "highlight");
             }
 
@@ -674,24 +666,19 @@ function parsePop(words, currStack, regStack) {
 
     var idx = regs.indexOf(words[1]);
     var stackVals = findCurrStackBlock(currStack);
-    console.log(vals[regs.indexOf("esp")]);
     var elem = getBlock(vals[regs.indexOf("esp")], "esp+0", currStack);
     //var elem = stackVals[1];
 
     if (elem != -1) {
         var updateVal = parseInt(elem.textContent);
-        console.log(updateVal);
+
         if (idx > -1) {
-            console.log(updateVal.toString(16));
             if (isNaN(updateVal)) {
-            	console.log("HELLO");
-            	var tempStr = "0x"
-            	console.log(elem);
-            	for (var i = elem.textContent.length - 1; i > 1; i--) {
-            		tempStr += elem.textContent.charCodeAt(i).toString(16);
-            		console.log(tempStr);
-            	}
-            	updateVal = parseInt(tempStr);
+                var tempStr = "0x"
+                for (var i = elem.textContent.length - 1; i > 1; i--) {
+                    tempStr += elem.textContent.charCodeAt(i).toString(16);
+                }
+                updateVal = parseInt(tempStr);
             }
             updateRegister(regStack, false, updateVal, regs[idx])
             elem.textContent = " ";
@@ -705,8 +692,10 @@ function parsePop(words, currStack, regStack) {
 
         if (regs[idx] === "ebp") {
             removeHighlight(elem, "ebp");
-            var newElem = getBlock(updateVal, "ebp+0", currStack);
-            highlightText(newElem, 0, "ebp");
+            try {
+                var newElem = getBlock(updateVal, "ebp+0", currStack);
+                highlightText(newElem, 0, "ebp");
+            } catch (err) {}
         }
 
         updateRegister(regStack, true, 4, "esp");

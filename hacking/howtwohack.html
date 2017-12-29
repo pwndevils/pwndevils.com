@@ -251,7 +251,7 @@ mov 0x8049634, eax</code></pre></div>
                     <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4. Take note, that the stack starts at high memory addresses and grows to low memory address. Our starting value here is at 0x10000 as shown in the bottom left. When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case). Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
                 </div>
             </div>
-            <div class="col-sm-4 well">
+            <div class="col-sm-4 well" style="margin-left: 3%;">
                 <div class="row">
                     <div class="col-sm-5 col-sm-offset-3 bottom-pad">
                         <h5 class="text-center">0xFFFFFFFF</h5>
@@ -626,7 +626,7 @@ main:
                 </div>
             </div>
         </div>
-    <div class="row bottom-pad">
+    <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
             <p>As the text at the end of the example states, there would be a segfault when the program returns. Why? It's actually pretty easy to understand. When the program calls <b>strcpy</b> it writes the string to the specified location on the stack which happens to be <b>ebp-0xc</b> which is also <b>0xffdc</b>. However, the string that's written to that location is much larger than four characters. This doesn't stop <b>strcpy</b> though. There's nothing that tells it not to write the entire string so it does. In the process, it overwrites what was previously on the stack. If you look at what is on the stack when strcpy is called you will see the <b>saved ebp</b> directly above where the <b>ebp</b> register points to. The <b>saved ebp</b> is the value of <b>ebp</b> from the previous function. Directly above that is what's called the <b>saved eip</b> which is the address of the instruction that we should return to when we finish this function.</p>
             <p>Now, when <b>strcpy</b> is called look at what happens to those values. They get completely overwritten by the contents of the string. Watch what happens when <b>leave</b> and <b>ret</b> are called. The value that is in <b>ebp</b> when leave is called is actually the little-endian value of the ascii in that location. The same is true of <b>eip</b> when <b>ret</b> is called. This means that the <b>eip</b> tries to go to the location of the instruction that is actually the little-endian ascii characters which is definitely not a valid address.</p>

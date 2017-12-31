@@ -577,7 +577,7 @@ main:
             </div>
         </div>
         <h3 class="text-center">Overflow Example</h3>
-        <div class="row bottom-pad bottom-pad mobile-margin-left-small mobile-margin-right-small">
+        <div class="row bottom-pad bottom-pad">
             <div class="col-sm-6 col-sm-offset-3 well">
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-3 bottom-pad">
@@ -611,7 +611,7 @@ main:
     leave                       ;0x8048435
     ret                         ;0x8048436</code></pre>
                             <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
-                            <p class="text-center hidden" id="segfault-overflow" style="color: red;"><b>SEGFAULT: INVALID EIP</b></p>
+                            <p class="text-center hidden" id="segfault-overflow" style="color: red;"><b>SEGFAULT: 0x22313032</b></p>
                         </div>
                     </div>
                 </div>
@@ -626,14 +626,23 @@ main:
                 </div>
             </div>
         </div>
-    <div class="row">
-        <div class="col-sm-6 col-sm-offset-3">
-            <p>As the text at the end of the example states, there would be a segfault when the program returns. Why? It's actually pretty easy to understand. When the program calls <b>strcpy</b> it writes the string to the specified location on the stack which happens to be <b>ebp-0xc</b> which is also <b>0xffdc</b>. However, the string that's written to that location is much larger than four characters. This doesn't stop <b>strcpy</b> though. There's nothing that tells it not to write the entire string so it does. In the process, it overwrites what was previously on the stack. If you look at what is on the stack when strcpy is called you will see the <b>saved ebp</b> directly above where the <b>ebp</b> register points to. The <b>saved ebp</b> is the value of <b>ebp</b> from the previous function. Directly above that is what's called the <b>saved eip</b> which is the address of the instruction that we should return to when we finish this function.</p>
-            <p>Now, when <b>strcpy</b> is called look at what happens to those values. They get completely overwritten by the contents of the string. Watch what happens when <b>leave</b> and <b>ret</b> are called. The value that is in <b>ebp</b> when leave is called is actually the little-endian value of the ascii in that location. The same is true of <b>eip</b> when <b>ret</b> is called. This means that the <b>eip</b> tries to go to the location of the instruction that is actually the little-endian ascii characters which is definitely not a valid address.</p>
-            <p><b>P.S.</b> In x86, all values are actually little endian which means the most significant byte is actually the least significat byte.  For example: the value of the string "step" is 0x73746570 to make this little-endian just reverse the byte order so it becomes 0x70657473.</p>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <p>As the text at the end of the example states, there would be a segfault when the program returns. Why? It's actually pretty easy to understand. When the program calls <b>strcpy</b> it writes the string to the specified location on the stack which happens to be <b>ebp-0xc</b> which is also <b>0xffdc</b>. However, the string that's written to that location is much larger than four characters. This doesn't stop <b>strcpy</b> though. There's nothing that tells it not to write the entire string so it does. In the process, it overwrites what was previously on the stack. If you look at what is on the stack when strcpy is called you will see the <b>saved ebp</b> directly above where the <b>ebp</b> register points to. The <b>saved ebp</b> is the value of <b>ebp</b> from the previous function. Directly above that is what's called the <b>saved eip</b> which is the address of the instruction that we should return to when we finish this function.</p>
+                <p>Now, when <b>strcpy</b> is called look at what happens to those values. They get completely overwritten by the contents of the string. Watch what happens when <b>leave</b> and <b>ret</b> are called. The value that is in <b>ebp</b> when leave is called is actually the little-endian value of the ascii in that location. The same is true of <b>eip</b> when <b>ret</b> is called. This means that the <b>eip</b> tries to go to the location of the instruction that is actually the little-endian ascii characters which is definitely not a valid address.</p>
+                <p><b>P.S.</b> In x86, all values are actually little endian which means the most significant byte is actually the least significat byte. For example: the value of the string "step" is 0x73746570 to make this little-endian just reverse the byte order so it becomes 0x70657473.</p>
+            </div>
         </div>
     </div>
-    </div>
+    <h3 class="text-center">Calling Things You Shouldn't</h3>
+    <div class="row">
+        <div class="col-sm-4 col-sm-offset-3">
+        </div>
+        <div class="col-sm-3">
+            <pre><code class="cpp" id="overflow-call-ex">
+            </code></pre>
+            </div>
+        </div>
     <div class="row" id="shellcode">
         <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">Coming Soon!</h2>

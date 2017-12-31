@@ -19,10 +19,6 @@
 </head>
 
 <body data-spy="scroll" data-target="#scroll-navbar" data-offset="100">
-    <!--[if lte IE 9]>
-            <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade your browser</a> to improve your experience and security.</p>
-        <![endif]-->
-    <!-- Add your site or application content here -->
     <nav id="scroll-navbar" class="navbar navbar-inverse navbar-fixed-top">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -56,6 +52,14 @@
             </div>
         </div>
     </nav>
+    <!--
+    _____          __  .__                        __      __.__.__      ________._____.  ___.           
+  /  _  \  __ ___/  |_|  |__   ___________  /\  /  \    /  \__|  |    /  _____/|__\_ |__\_ |__   ______
+ /  /_\  \|  |  \   __\  |  \ /  _ \_  __ \ \/  \   \/\/   /  |  |   /   \  ___|  || __ \| __ \ /  ___/
+/    |    \  |  /|  | |   Y  (  <_> )  | \/ /\   \        /|  |  |__ \    \_\  \  || \_\ \ \_\ \\___ \ 
+\____|__  /____/ |__| |___|  /\____/|__|    \/    \__/\  / |__|____/  \______  /__||___  /___  /____  >
+        \/                 \/                          \/                    \/        \/    \/     \/ 
+        -->
     <div id="loader-wrapper">
         <div id="loader"></div>
         <div class="loader-section section-left"></div>
@@ -506,15 +510,15 @@ main:
         </div>
     </div>
     </div>
-    <div class="row bottom-pad bottom-pad mobile-margin-left mobile-margin-right" id="buffer-overflows">
+    <div class="row bottom-pad bottom-pad mobile-margin-left-small mobile-margin-right-small" id="buffer-overflows">
         <h2 class="text-center"><b>Buffer Overflows</b></h1>
             <h3 class="text-center">The Accident</h2>
         <div class="row bottom-pad" id="assembly">
             <div class="col-sm-3 col-sm-offset-3">
                 <pre><code class="language-cpp">   
 
-#include "string.h"
-#include "stdio.h"
+#include &lt;string.h&gt;
+#include &lt;stdio.h&gt;
 
 
 void mycpy(char* str)
@@ -577,7 +581,7 @@ main:
             </div>
         </div>
         <h3 class="text-center">Overflow Example</h3>
-        <div class="row bottom-pad bottom-pad">
+        <div class="row bottom-pad bottom-pad mobile-margin-left-small mobile-margin-right-small">
             <div class="col-sm-6 col-sm-offset-3 well">
                 <div class="row">
                     <div class="col-sm-4 col-sm-offset-3 bottom-pad">
@@ -588,28 +592,28 @@ main:
                     <div class="col-sm-5" style="margin-top: 35px;">
                         <div class="row">
                             <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
-    push ebp                    ;0x80483f4
-    mov ebp, esp                ;0x80483f5
-    sub esp, 0x28               ;0x80483f7
-    mov eax, [ebp+0x8]          ;0x80483fa
-    mov [esp+0x4], eax          ;0x80483fd
-    lea eax, [ebp-0xc]          ;0x8048401
-    mov [esp+0x0], eax          ;0x8048404
-    call strcpy                 ;0x8048407
-    leave                       ;0x804840c
-    ret                         ;0x804840d
+    push ebp                   ;0x80483f4
+    mov ebp, esp               ;0x80483f5
+    sub esp, 0x28              ;0x80483f7
+    mov eax, [ebp+0x8]         ;0x80483fa
+    mov [esp+0x4], eax         ;0x80483fd
+    lea eax, [ebp-0xc]         ;0x8048401
+    mov [esp+0x0], eax         ;0x8048404
+    call strcpy                ;0x8048407
+    leave                      ;0x804840c
+    ret                        ;0x804840d
 main:
-    push ebp                    ;0x804840e
-    mov ebp, esp                ;0x804840f
-    sub esp, 0x10               ;0x8048414
-    movl [esp+0x0], 0x8048504   ;0x8048417
-    call mycpy                  ;0x804841e
-    mov eax, 0x8048517          ;0x8048423
-    mov [esp+0x0], eax          ;0x8048428
-    call printf                 ;0x804842b
-    mov eax, 0x0                ;0x8048430
-    leave                       ;0x8048435
-    ret                         ;0x8048436</code></pre>
+    push ebp                   ;0x804840e
+    mov ebp, esp               ;0x804840f
+    sub esp, 0x10              ;0x8048414
+    movl [esp+0x0], 0x8048504  ;0x8048417
+    call mycpy                 ;0x804841e
+    mov eax, 0x8048517         ;0x8048423
+    mov [esp+0x0], eax         ;0x8048428
+    call printf                ;0x804842b
+    mov eax, 0x0               ;0x8048430
+    leave                      ;0x8048435
+    ret                        ;0x8048436</code></pre>
                             <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
                             <p class="text-center hidden" id="segfault-overflow" style="color: red;"><b>SEGFAULT: 0x22313032</b></p>
                         </div>
@@ -626,7 +630,7 @@ main:
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row mobile-margin-left-small mobile-margin-right-small">
             <div class="col-sm-6 col-sm-offset-3">
                 <p>As the text at the end of the example states, there would be a segfault when the program returns. Why? It's actually pretty easy to understand. When the program calls <b>strcpy</b> it writes the string to the specified location on the stack which happens to be <b>ebp-0xc</b> which is also <b>0xffdc</b>. However, the string that's written to that location is much larger than four characters. This doesn't stop <b>strcpy</b> though. There's nothing that tells it not to write the entire string so it does. In the process, it overwrites what was previously on the stack. If you look at what is on the stack when strcpy is called you will see the <b>saved ebp</b> directly above where the <b>ebp</b> register points to. The <b>saved ebp</b> is the value of <b>ebp</b> from the previous function. Directly above that is what's called the <b>saved eip</b> which is the address of the instruction that we should return to when we finish this function.</p>
                 <p>Now, when <b>strcpy</b> is called look at what happens to those values. They get completely overwritten by the contents of the string. Watch what happens when <b>leave</b> and <b>ret</b> are called. The value that is in <b>ebp</b> when leave is called is actually the little-endian value of the ascii in that location. The same is true of <b>eip</b> when <b>ret</b> is called. This means that the <b>eip</b> tries to go to the location of the instruction that is actually the little-endian ascii characters which is definitely not a valid address.</p>
@@ -634,15 +638,90 @@ main:
             </div>
         </div>
     </div>
-    <h3 class="text-center">Calling Things You Shouldn't</h3>
-    <div class="row">
+    <h3 class="text-center bottom-pad">Calling Things You Shouldn't</h3>
+    <div class="row mobile-margin-left mobile-margin-right">
         <div class="col-sm-4 col-sm-offset-3">
+            <p>I've gone ahead and modified the example that we had earlier. You'll see that the same vulnerability exists, but there is now an additional method called <b>notCalled()</b>. As the name states, the function is never called. That's where we come in. But how? How can you call a method that's not called? Wrack your brain a bit. Is there something from the x86 assembly we know of that controls where a program goes? That's right, the <b>eip</b>! It points to the address of the next instruction. If you look back at the last example for x86 you'll see that the <b>saved eip</b> gets overwritten by the local buffer and then we get a segfault when trying to go to the invalid locaiton.</p>
+            <p>So now that we have a goal, to control the <b>saved eip</b>, how do we go about doing it in a way that is useful to us. The first real step is to understand and dissect what the program does. Looking at the code, you can see that it will only accept two arguments and that the second argument is passed to the <b>mycpy</b>.</p>
+            <p>Now, if you didn't know, the <b>argv</b> of a program is given via the commandline (e.g. <b>./myprogram arg1</b>). It's important to note that the argv[0] is actually the file name and argv[1] is the first argument that you provide. </p>
+            <p>Back to the exploit. So, what's this program doing? It looks like it takes in an argument from <b>argv</b> and sends it to the <b>mycpy()</b> method. So, what's mycpy do? It copies your input string into a 4 char buffer. Well that's a buffer overflow waiting to happen. So now that we've identified the way we can input our buffer overflow and where it occurs, it's now time to actually exploit it! You can download the C file <a href="../file_resources/overflow.c" download>here</a> and the actual binary <a href="../file_resources/overflow.o" download>here</a>. To compile the code yourself do <b>gcc -m32 -fno-stack-protector overflow.c -o overflow.o</b></p>
+            <p>(No matter how complicated the overflow, it'll generally boil down to 3 things: Identifying the overflow, Identifying a place to jump to, and how the input is handled)</p>
         </div>
         <div class="col-sm-3">
-            <pre><code class="cpp" id="overflow-call-ex">
-            </code></pre>
+            <pre><code class="cpp" id="overflow-call-ex">#include &ltstring.h&gt
+#include &lt;stdio.h&gt;
+
+void mycpy(char* str)
+{   
+  char foo[4];   
+  strcpy(foo, str);
+}
+
+int main(int argc, char* argv[])
+{   
+  if (argc != 2) {
+    printf("Please supply a second arg!\n");
+    return -1;
+  }
+  mycpy(argv[1]);   
+  printf("After");   
+  return 0;
+}
+
+void notCalled() {
+  printf("YOU CALLED ME!\n");
+  system("/bin/sh");
+}</code></pre>
+        </div>
+    </div>
+    <h3 class="text-center bottom-pad">Gathering Info</h3>
+    <div class="row mobile-margin-left mobile-margin-right">
+        <div class="col-sm-4 col-sm-offset-2">
+            <p>It's now time to introduce the first tool in our arsenal that'll be integral to breaking binaries by looking at the raw assembly, <b>objdump</b>. We can't tell just from the C code how the buffer is set up on the stack. We won't always have the C code to rely on either, so <b>objdump</b> will quickly become a close friend. Let's try it! Navigate to the directory that the overflow.o file is in. Run the command <b>objdump -D -M intel ./overflow.o | less</b>. The <b>-D</b> tells objdump to disassemble everything it can find and the <b>-M intel</b> tells it to disassemble into intel syntax rather than the default AT&amp;T syntax. The pipe to less just makes the output navigable in a vim format. If you don't know how to search type: <b>/search_term</b>. Since we identified the overflow in <b>mycpy()</b> lets search for it and look at what it's assembly is. We really only care about the <b>strcpy</b> function and where the buffers are. Remember that the calling convention for cdecl is to push the arguments to the stack before the function is called.</p>
+        </div>
+        <div class="container">
+            <div class="col-sm-6 well">
+                <img src="../img/call_me_objdump.JPG" class="img-responsive" alt="binary objdump">
             </div>
         </div>
+    </div>
+    <div class="row mobile-margin-left mobile-margin-right">
+        <div class="col-sm-4 col-sm-offset-2">
+            <p>We can see that there are two <b>push</b> instructions, one that does <b>push DWORD PTR [ebp+0x8]</b> and one that does <b>lea eax, [ebp-0xc]</b>. Which is our local buffer? You can actually tell in two different ways. The first being that the arguments are pushed on the stack in order from last to first meaning that the last push that happens before the function is called is actually the first argument. We know that <b>strcpy</b> moves from (dest, src) meaning the first arg is actually our local buffer. The second way to tell is that the first push to happen pushes the pointer to <b>ebp+0x8</b>. Really the only time an offset of <b>ebp</b> will be positive is when accessing a functions current parameters. Looking at the second push we see that it's a <b>lea</b> instruction meaning its getting a pointer to the location of <b>ebp-0xc</b>. Since <b>ebp-0xc</b> is an address in our current function frame that's where our local buffer is going to be.</p>
+            <p>To the right is a representation of what the stack would look like in this situation. Since the location of the buffer is <b>ebp-0xc</b> that means that we only need to fill <b>0xc</b> bytes amount of data (3 words) to reach the <b>ebp</b>. Then to overwrite the <b>Saved EBP</b> we only need 4 more bytes (1 word). I should mention we don't care about what we put in for the <b>Saved EBP</b> location because we won't need to rely on previous stack locations. The next 4 bytes is the value of <b>saved EIP</b>. This is where our <b>eip</b> will move to once the current function returns. What do you think this value should be? What would happen if we put in the address of the <b>notCalled()</b> function? To find the address of the <b>notCalled()</b> function we'll need to go back into our <b>objdump</b> and grab the address next to it. In my case it is <b>0x08048516</b> (for reference, the address of <b>mycpy()</b> is <b>0x0804849b</b>). Okay great, we know what our offset is and the value we want to overwrite the <b>Saved EIP</b> with, but how do we use any of this. We will now enter the awesome world of python.</p>
+        </div>
+        <div class="col-sm-2 well stack-loc">"Your&nbsp;String" Saved&nbsp;EIP Saved&nbsp;EBP &nbsp; &nbsp; Buffer&nbsp;Location &nbsp; &nbsp; &nbsp; &amp;("Your&nbsp;String") &amp;(Buffer&nbsp;Location)</div>
+        <div class="col-sm-2 well stack-loc">"Your&nbsp;String" Jump&nbsp;Address&nbsp;(Saved&nbsp;EIP) aaaa&nbsp;(Saved&nbsp;EBP) aaaa aaaa aaaa&nbsp;(Buffer&nbsp;Location) &nbsp; &nbsp; &nbsp; &amp;("Your&nbsp;String") &amp;(Buffer&nbsp;Location)</div>
+    </div>
+    <h3 class="text-center">Exploiting The Binary</h3>
+    <div class="row mobile-margin-left-small mobile-margin-right-small">
+        <div class="col-sm-4 col-sm-offset-2">
+            <p>Even if you've never written a line of python before, it's actually pretty easy to understand. Since we won't need to write much, we'll actually go for the in-line approach. In bash, you can write in-line python code like this: <b>python -c "your code here"</b>. Simple right? Another awesome feature of python is its string repetition operator <b>*</b> We can repeat a string any amount of times with this. Let's say we wanted to write 'Hello' 5 times. Our code would look like <b>"print 'Hello'*5"</b> our output would be <b>HelloHelloHelloHelloHello</b>. Note that we used double quotes to wrap the code and single quotes to wrap the string. You can switch the two so that strings are double quoted and the code is encased in single quotes, but you cannot use one for both strings and code. Now, how can we apply this python to our exploit?</p>
+        </div>
+        <div class="container-fluid">
+            <div class="col-sm-5 well">
+                <img src="../img/first_exploit.JPG" class="img-responsive" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="row mobile-margin-left-small mobile-margin-right-small">
+         <div class="col-sm-4 col-sm-offset-2">
+            <p>Well we know that we need to generate 3 words for the buffer, 1 word for the <b>Saved EBP</b> and 1 word for the <b>Saved EIP</b>. That's 4 + 1 words in total. Since 1 word is 4 bytes we need a total of 16 + 4 bytes of data. We can write it in python like so <b>python -c "print 'a'*16 + 'b'*4"</b>. The reason we use the same character for most things is because we can check the address of the segfault with the command <b>dmesg | tail</b>. An 'a' has the ascii hex value of <b>0x61</b> and 'b' <b>0x62</b>. Looking at the address of a segfault that looks like <b>0x61616161</b> would mean that our a's actually filled the <b>Saved EIP</b>. The next thing we want to do is replace the b's with the address of <b>notCalled()</b>. Remember that this is x86 and everything is little-endian so we must reverse our address of <b>0x08048516</b> to <b>0x16850408</b>. Now to have python output the actual bytes rather than the string version we need to use the syntax of <b>'\xBYTE'</b>. So in our case it would be <b>'\x16\x85\x04\x08'</b>. Let's combine this with our previous python code to make <b>python -c "print 'a'*16 + '\x16\x85\x04\x08'"</b>. Great, now we have our output set up.</p>
+            <p>Normally the program would accept input via <b>stdin</b> in which case we could just pipe it into the program like <b>python -c "print 'a'*16 + '\x16\x85\x04\x08'" | ./program.o</b>, but our program accepts the input via an argument. To make bash evaluate the python in the argument we need to wrap it like so: <b>$(python -c "print 'a'*16 + '\x16\x85\x04\x08'")</b>. The whole line with the program will be: <b>./overflow.o $(python -c "print 'a'*16 + '\x16\x85\x04\x08'")</b>. Congratulations, you just executed your first successful buffer overflow!</p></div>
+         <div class="col-sm-4 well">
+         <h4 class="text-center">Here are some other challenges to try!</h4>
+         <h5>Here's an example to help with the stack</h5>
+         <ul>
+             <li><a href="../file_resources/stack_peek.c" download>stack_peek.c</a></li>
+             <li><a href="../file_resources/Unknown1" download="stack_peek.o">stack_peek.o</a></li>
+         </ul>
+         <h5>Try doing these without C files</h5>
+         <ul>
+             <li><a href="../file_resources/vuln" download>Vuln</a></li>
+             <li><a href="../file_resources/call_me.o" download>Call Me</a></li>
+         </ul>
+         </div>
+     </div> 
     <div class="row" id="shellcode">
         <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">Coming Soon!</h2>

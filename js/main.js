@@ -747,7 +747,3 @@ function parseASM(line, lineNum, elem, currStack, regStack) {
             break;
     }
 }
-jQuery.get('http://localhost/file_resources/overflow.c', function(data) {
-    document.getElementById("overflow-call-ex").textContent = data;
-});
-

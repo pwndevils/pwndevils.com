@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="../css/main.css">
     <link rel="stylesheet" href="../highlight/styles/default.css">
+    <link rel="stylesheet" href="../node_modules/xterm/dist/xterm.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 </head>
@@ -705,23 +706,28 @@ void notCalled() {
         </div>
     </div>
     <div class="row mobile-margin-left-small mobile-margin-right-small">
-         <div class="col-sm-4 col-sm-offset-2">
+        <div class="col-sm-4 col-sm-offset-2">
             <p>Well we know that we need to generate 3 words for the buffer, 1 word for the <b>Saved EBP</b> and 1 word for the <b>Saved EIP</b>. That's 4 + 1 words in total. Since 1 word is 4 bytes we need a total of 16 + 4 bytes of data. We can write it in python like so <b>python -c "print 'a'*16 + 'b'*4"</b>. The reason we use the same character for most things is because we can check the address of the segfault with the command <b>dmesg | tail</b>. An 'a' has the ascii hex value of <b>0x61</b> and 'b' <b>0x62</b>. Looking at the address of a segfault that looks like <b>0x61616161</b> would mean that our a's actually filled the <b>Saved EIP</b>. The next thing we want to do is replace the b's with the address of <b>notCalled()</b>. Remember that this is x86 and everything is little-endian so we must reverse our address of <b>0x08048516</b> to <b>0x16850408</b>. Now to have python output the actual bytes rather than the string version we need to use the syntax of <b>'\xBYTE'</b>. So in our case it would be <b>'\x16\x85\x04\x08'</b>. Let's combine this with our previous python code to make <b>python -c "print 'a'*16 + '\x16\x85\x04\x08'"</b>. Great, now we have our output set up.</p>
-            <p>Normally the program would accept input via <b>stdin</b> in which case we could just pipe it into the program like <b>python -c "print 'a'*16 + '\x16\x85\x04\x08'" | ./program.o</b>, but our program accepts the input via an argument. To make bash evaluate the python in the argument we need to wrap it like so: <b>$(python -c "print 'a'*16 + '\x16\x85\x04\x08'")</b>. The whole line with the program will be: <b>./overflow.o $(python -c "print 'a'*16 + '\x16\x85\x04\x08'")</b>. Congratulations, you just executed your first successful buffer overflow!</p></div>
-         <div class="col-sm-4 well">
-         <h4 class="text-center">Here are some other challenges to try!</h4>
-         <h5>Here's an example to help with the stack</h5>
-         <ul>
-             <li><a href="../file_resources/stack_peek.c" download>stack_peek.c</a></li>
-             <li><a href="../file_resources/Unknown1" download="stack_peek.o">stack_peek.o</a></li>
-         </ul>
-         <h5>Try doing these without C files</h5>
-         <ul>
-             <li><a href="../file_resources/vuln" download>Vuln</a></li>
-             <li><a href="../file_resources/call_me.o" download>Call Me</a></li>
-         </ul>
-         </div>
-     </div> 
+            <p>Normally the program would accept input via <b>stdin</b> in which case we could just pipe it into the program like <b>python -c "print 'a'*16 + '\x16\x85\x04\x08'" | ./program.o</b>, but our program accepts the input via an argument. To make bash evaluate the python in the argument we need to wrap it like so: <b>$(python -c "print 'a'*16 + '\x16\x85\x04\x08'")</b>. The whole line with the program will be: <b>./overflow.o $(python -c "print 'a'*16 + '\x16\x85\x04\x08'")</b>. Congratulations, you just executed your first successful buffer overflow!</p>
+        </div>
+        <div class="col-sm-4 well">
+            <h4 class="text-center">Here are some other challenges to try!</h4>
+            <h5>Here's an example to help with the stack</h5>
+            <ul>
+                <li><a href="../file_resources/stack_peek.c" download>stack_peek.c</a></li>
+                <li><a href="../file_resources/Unknown1" download="stack_peek.o">stack_peek.o</a></li>
+            </ul>
+            <h5>Try doing these without C files</h5>
+            <ul>
+                <li><a href="../file_resources/vuln" download>Vuln</a></li>
+                <li><a href="../file_resources/call_me.o" download>Call Me</a></li>
+            </ul>
+        </div>
+    </div>
+    <h3 class="text-center bottom-pad">Let's Try It Out!</h3>
+    <div class="row mobile-margin-left-small mobile-margin-right-small">
+        <div class="col-sm-6 col-sm-offset-3 well" id="terminal"></div>
+    </div>
     <div class="row" id="shellcode">
         <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">Coming Soon!</h2>
@@ -736,7 +742,7 @@ void notCalled() {
     </div>
     <div class="row" id="heap-exploit">
         <h2 class="text-center"><b>Heap Exploitation</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
+            <h3 class="text-center">I'm not great at heaps. Coming not so soon!</h2>
     </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
@@ -746,9 +752,52 @@ void notCalled() {
     </script>
     <script src="../js/plugins.js"></script>
     <script src="../js/main.js"></script>
+    <script src="../node_modules/xterm/dist/xterm.js"></script>
+    <script src="../node_modules/xterm/dist/addons/attach/attach.js"></script>
     <script src="../highlight/highlight.pack.js"></script>
     <script>
     hljs.initHighlightingOnLoad();
+    </script>
+    <script>
+    var term = new Terminal({
+        cursorBlink: true,
+        rows: 20,
+        tabStopWidth: 4
+    });
+    /*var socket = new WebSocket('wss://docker.example.com/containers/mycontainerid/attach/ws');
+    term.attach(socket, true, true);*/
+    term.open(document.getElementById('terminal'), false);
+    var user = ' \033[1;3;31mbuffer@overflow\033[0m:\033[1;34m~\033[0m\033[1;32m$\033[0m ';
+    term.write(user);
+    var currInput = '';
+    var allData = '';
+    term.textarea.onkeydown = function(e) {
+        //console.log('User pressed key with keyCode: ', e.keyCode, e.key);
+        if (e.keyCode == 13) { //Enter
+            term.writeln('');
+            term.write(user);
+            if (currInput === 'clear') {
+                term.clear();
+            }
+            currInput = '';
+        } else if (e.keyCode == 8) { //BackSpace
+            term.write('\r');
+            currInput = currInput.slice(0, -1);
+            term.write(user + currInput + ' ');
+            term.write('\r');
+            term.write(user + currInput);
+        } else if (e.keyCode == 16) { //Shift
+            //Do Nothing
+        } else if (e.keyCode == 17) { //Control
+            //Do Nothing
+        } else if (e.keyCode == 18) { //Alt
+            //Do Nothing
+        } else {
+            term.write(e.key);
+            currInput += e.key;
+        }
+
+    }
     </script>
     <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
     <!-- <script> -->

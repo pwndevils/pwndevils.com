@@ -725,25 +725,109 @@ void notCalled() {
         </div>
     </div>
     <h3 class="text-center bottom-pad">Let's Try It Out!</h3>
-    <div class="row mobile-margin-left-small mobile-margin-right-small">
+    <div class="row mobile-margin-left-small mobile-margin-right-small bottom-pad">
         <div class="col-sm-6 col-sm-offset-3 well" id="terminal"></div>
     </div>
     <div class="row" id="shellcode">
         <h2 class="text-center"><b>Shellcode</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
+            <h3 class="text-center">What is it?</h2>
+        <div class="col-sm-3 col-sm-offset-1">
+            <div class="col-sm-11 col-sm-offset-2">
+                <p>What is Shellcode? Well I'm glad you asked anonymous reader! Shellcode isn't quite as widely used today due to some protections that were introduced that make the stack non-executable in most systems, but we'll cover it anyways. Shellcode is code that is written, usually in assembly, to primarily get a shell (you can make it do other things, but for now we'll just use it to get shells). </p>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="col-sm-11 col-sm-offset-2">
+                <p>Situations in which you'd actually use shellcode is when you know that the stack is executable and you have no clear target with a buffer overflow. Shellcode will allow us to inject specially crafted code onto the stack and execute it. But how is this possible you might ask? We need to set up a couple of things first in order to make it work.</p>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="col-sm-9 col-sm-offset-1">
+                <p>The first step is to understand how <b>syscall</b>'s work in x86. Then you'll need to translate the code you want to execute into assembly. Then you need to modify that assembly so that once the bytecode is made you can actually input the whole thing into the program. The last step is to get that bytecode. Simple enough!</p>
+            </div>
+        </div>
     </div>
-    <div class="row" id="format-strings">
-        <h2 class="text-center"><b>Format Strings</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
-    </div>
-    <div class="row" id="rop">
-        <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
-    </div>
-    <div class="row" id="heap-exploit">
-        <h2 class="text-center"><b>Heap Exploitation</b></h1>
-            <h3 class="text-center">I'm not great at heaps. Coming not so soon!</h2>
-    </div>
+    <h3 class="text-center">Square One</h2>
+    <div class="row bottom-pad" id="assembly">
+        <div class="col-sm-3 col-sm-offset-3">
+                <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
+
+int main() {
+    exit(0);
+    return 1;
+}
+
+</code></pre>
+            </div>
+            <div class="col-sm-3">
+                <pre><code class="x86asm hljs">.text
+.global main
+
+main:
+    mov $0, %ebx
+    mov $1, %eax
+    int 0x80</code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>Let's start off by trying to replicate something like <b>exit(0)</b> from C into x86. First off, I know we've been reading x86 with intel syntax, but we have to write it with AT&amp;T syntax. The only differences that we'll look at are that all constants are preceded by <b>$</b>, all registers are preceded by <b>%</b>, and the <b>src</b> and <b>dst</b> registers are switched. If you get confused just try and look for a constant like <b>$20</b> being <b>mov</b>'d and you'll see which is the <b>src</b> and <b>dst</b> because you can't <b>mov</b> a register into a constant.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="x86asm hljs">
+mov $0, %ebx
+
+</code></pre></div>
+                </div>
+            </div>
+        </div>    
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>Now that that's out of the way let's actually try to take this C code and turn it into x86. <b>exit</b> is what's known as a <b>syscall</b> meaning the function is pre-programmed and it runs with escalated privilages. These <b>syscall</b>'s all have numbers associated with them and you can find a table <a href="https://syscalls.kernelgrok.com/">here</a>. The <b>syscall</b> number comes into play when setting up the <b>syscall</b> in x86. Looking to the right you can see how an x86 <b>syscall</b> is set up. The <b>syscall</b> number goes into <b>eax</b>. The first parameter goes into <b>ebx</b>. The second paramater goes into <b>ecx</b> and so on. The last thing to note is that in x86 after you've set up all the paramaters and <b>syscall</b> number, you'll need to do a final instruction called <b>int 80</b>. This is a special interupt to let the kernel know that it should start a syscall with this information.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="x86asm hljs">eax: Syscall #
+ebx: 1st Param
+ecx: 2nd Param
+edx: 3rd Param
+esi: 4th Param
+edi: 5th Param
+ebp: 6th Param
+
+return val: eax</code></pre></div>
+                </div>
+            </div>
+        </div>    
+        <div class="row bottom-pad">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>Note that the order does not matter in which we load the values as long as everything is in place before we do <b>int 80</b>. We need to look up some information about <b>exit</b> in order to translate it into assembly. First, how many arguments does it take (You can find all this out with the <b>man</b> command on linux)? It takes one argument which is the exit code. Now that we know that, what's its <b>syscall</b> number? We can look at the link and see that it's 1. Now with this we just have to put 1 into <b>eax</b> and whatever we want our exit code to be, in this case 0, in <b>ebx</b>. That's simple enough with a couple of <b>mov</b> instructions. Now just do an <b>int 80</b> and were done! That was easy.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="x86asm hljs">mov $0, %ebx
+mov $1, %eax
+int 0x80</code></pre></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="format-strings">
+            <h2 class="text-center"><b>Format Strings</b></h1>
+                <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="rop">
+            <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
+                <h3 class="text-center">Coming Soon!</h2>
+        </div>
+        <div class="row" id="heap-exploit">
+            <h2 class="text-center"><b>Heap Exploitation</b></h1>
+                <h3 class="text-center">I'm not great at heaps. Coming not so soon!</h3>
+                <h3 class="text-center">In the mean time, check out Shellphish's <a href="https://github.com/shellphish/how2heap">how2heap</a>.</h3>
+        </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
@@ -764,8 +848,11 @@ void notCalled() {
         rows: 20,
         tabStopWidth: 4
     });
-    /*var socket = new WebSocket('wss://docker.example.com/containers/mycontainerid/attach/ws');
-    term.attach(socket, true, true);*/
+    //var socket = new WebSocket('wss://docker.example.com/containers/mycontainerid/attach/ws');
+    //var socket = new WebSocket('ws://192.168.99.100:31337', true);
+    var socket = new WebSocket('ws://echo.websocket.org', true);
+    socket.binaryType = 'arraybuffer';
+    //term.attach(socket, true, true);
     term.open(document.getElementById('terminal'), false);
     var user = ' \033[1;3;31mbuffer@overflow\033[0m:\033[1;34m~\033[0m\033[1;32m$\033[0m ';
     term.write(user);

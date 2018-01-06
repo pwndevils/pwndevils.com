@@ -912,8 +912,7 @@ main:
     push $0x0068732f
     push $0x6e69622f
     mov %esp, %ebx
-    mov $0x0, %ecx
-    push %ecx
+    push $0x0
     push %ebx
     mov %esp, %ecx
     mov $0x0, %edx
@@ -932,6 +931,61 @@ execve(shell[0], shell, NULL);
 
 </code></pre></div>
                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>To explain the assembly above let's look at how we need to set up each of the parameters for the <b>syscall</b>. We have three parameters that will need to be loaded into the <b>ebx</b>, <b>ecx</b>, and <b>edx</b> registers while the <b>syscall</b> number is loaded into the <b>eax</b> register. Looking up the <b>syscall</b> number we can see that it is 11 or 0x0b. This is why we <b>mov</b> 0x0b into <b>eax</b>. The next two instructions are <b>push</b> instructions of bytes. Those bytes are actually the little endian representation of the string "/bin/sh" terminated by a NULL byte. It also greatly helps us that there are only 7 bytes in the string meaning that we only need one byte to fill the rest of the 2nd word taken up by the string. Being word aligned is very important for us because of how we will access it. Since we won't have control over the addresses of the string (most of the time) we need to make sure our shellcode works at any location. We can do this with the next instruction that does a <b>mov</b> of <b>esp</b> into <b>ebx</b>. Since the <b>push</b> isntruction updates the address in <b>esp</b>, when the second <b>push</b> is made the current address in <b>esp</b> points to the NULL terminated string that we pushed. Moving this address into <b>ebx</b> sets up the first parameter of our <b>execve</b> call.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="cpp hljs">
+push $0x0068732f
+push $0x6e69622f
+mov %esp, %ebx
+
+</code></pre></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>The second parameter that we set up is a pointer to our arguments. This means a pointer to both our filename ('/bin/sh') and our environment variables (NULL). To get a pointer to these arguments we can do exactly what we did to get a pointer to '/bin/sh'. We <b>push</b> 0x0 (which is really 0x00000000) to the stack and then we push the pointer to our filename which is in <b>ebx</b> to the stack. We can then <b>mov</b> the <b>esp</b> into <b>ecx</b> to get a pointer to our arguments. The last argument is easy since its NULL. All we do is <b>mov</b> 0x0 into <b>edx</b>. That's it! You can compile this and run it and you will get a shell. We've just made working shellcode, but as you'll see below there are a lot of NULL bytes in the bytecode we have to worry about.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="cpp hljs">
+push $0x0
+push %ebx
+mov %esp, %ecx
+mov $0x0, %edx
+
+</code></pre></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                        <pre><code class="x86asm hljs">080483db &lt;main&gt;:
+ 80483db:       b8 0b 00 00 00          mov    eax,0xb
+ 80483e0:       68 2f 73 68 00          push   0x68732f
+ 80483e5:       68 2f 62 69 6e          push   0x6e69622f
+ 80483ea:       89 e3                   mov    ebx,esp
+ 80483ec:       6a 00                   push   0x0
+ 80483ee:       53                      push   ebx
+ 80483ef:       89 e1                   mov    ecx,esp
+ 80483f1:       ba 00 00 00 00          mov    edx,0x0
+ 80483f6:       cd 80                   int    0x80
+
+</code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                
             </div>
         </div>
         <div class="row" id="format-strings">

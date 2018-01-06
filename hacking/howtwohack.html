@@ -747,7 +747,7 @@ void notCalled() {
             </div>
         </div>
     </div>
-    <h3 class="text-center">Square One</h2>
+    <h3 class="text-center">Square One</h3>
     <div class="row bottom-pad" id="assembly">
         <div class="col-sm-3 col-sm-offset-3">
                 <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
@@ -764,16 +764,16 @@ int main() {
 .global main
 
 main:
-    mov $0, %ebx
-    mov $1, %eax
-    int 0x80</code></pre>
+    mov $0x0, %ebx
+    mov $0x1, %eax
+    int $0x80</code></pre>
             </div>
         </div>
         <div class="row">
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="row">
                     <div class="col-sm-8">
-                        <p>Let's start off by trying to replicate something like <b>exit(0)</b> from C into x86. First off, I know we've been reading x86 with intel syntax, but we have to write it with AT&amp;T syntax. The only differences that we'll look at are that all constants are preceded by <b>$</b>, all registers are preceded by <b>%</b>, and the <b>src</b> and <b>dst</b> registers are switched. If you get confused just try and look for a constant like <b>$20</b> being <b>mov</b>'d and you'll see which is the <b>src</b> and <b>dst</b> because you can't <b>mov</b> a register into a constant.</p>
+                        <p>Let's start off by trying to replicate something like <b>exit(0)</b> from C into x86. First off, I know we've been reading x86 with intel syntax, but we have to write it with AT&amp;T syntax. The only differences that we'll look at are that all constants are preceded by <b>$</b>, all registers are preceded by <b>%</b>, and the <b>src</b> and <b>dst</b> registers are switched. If you get confused just try and look for a constant like <b>$0x0</b> being <b>mov</b>'d and you'll see which is the <b>src</b> and <b>dst</b> because you can't <b>mov</b> a register into a constant.</p>
                     </div>
                     <div class="col-sm-4">
                         <pre><code class="x86asm hljs">
@@ -802,31 +802,150 @@ return val: eax</code></pre></div>
                 </div>
             </div>
         </div>    
-        <div class="row bottom-pad">
+        <div class="row">
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="row">
                     <div class="col-sm-8">
                         <p>Note that the order does not matter in which we load the values as long as everything is in place before we do <b>int 80</b>. We need to look up some information about <b>exit</b> in order to translate it into assembly. First, how many arguments does it take (You can find all this out with the <b>man</b> command on linux)? It takes one argument which is the exit code. Now that we know that, what's its <b>syscall</b> number? We can look at the link and see that it's 1. Now with this we just have to put 1 into <b>eax</b> and whatever we want our exit code to be, in this case 0, in <b>ebx</b>. That's simple enough with a couple of <b>mov</b> instructions. Now just do an <b>int 80</b> and were done! That was easy.</p>
                     </div>
                     <div class="col-sm-4">
-                        <pre><code class="x86asm hljs">mov $0, %ebx
-mov $1, %eax
-int 0x80</code></pre></div>
+                        <pre><code class="x86asm hljs">mov $0x0, %ebx
+mov $0x1, %eax
+int $0x80</code></pre></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                        <pre><code class="x86asm hljs">080483db &lt;main&gt;:
+ 80483db:       bb 00 00 00 00          mov    ebx,0x0
+ 80483e0:       b8 01 00 00 00          mov    eax,0x1
+ 80483e5:       cd 80                   int    0x80
+</code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                        <p>Above is the output of the main function from <b>objdump -D -M intel ./a.out | less</b> after saving the assembly code as <b>exit_example.s</b> and compiling with <b>gcc -m32 exit_example.s</b>. We can extract the bytecode from the output above. The bytecode of this output is the bytes between the address and the instruction. The whole bytecode would be <b>bb 00 00 00 00</b>, <b>b8 01 00 00 00</b>, and <b>cd 80</b>. Turning this into something that python can output it also easy, just replace the spaces with with the byte syntax making it <b>'\xbb\x00\x00\x00\x00\xb8\x01\x00\x00\x00\xcd\x80'</b>. However, if there were a buffer overflow we couldn't just send this as input directly into the program unfortunately. The reason we can't do that is due to the fact that our bytecode has null bytes in it. This is a problem because strings in C and C++ are null terminated so as soon as whatever is reading our input hits the first null byte in the input, it would disregard the rest of our input. Taking out the null bytes will require a few tricks on our end.</p>
+                    </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>Looking at our first instruction with null bytes we have <b>mov $0x0, %ebx</b>. The null byte comes from loading the constant value of 0. Is there a way to put a 0 into the register of <b>ebx</b>? It would be possible to say <b>mov</b> a 0 from a register that had the value into <b>ebx</b>, but that's not even necessary. One way to put a 0 into the register is to <b>xor</b> the register with itself. The truth table for logical <b>xor</b> is to the right. All it shows is that when two of the bits are the same the result is a 0. This means that if you <b>xor</b> a register with itself its <b>xor</b>ing one value with the exact same value which will produce a 0.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="x86asm hljs">  XOR|0|1|
+   |0|F|T|
+   |1|T|F|
+</code></pre></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-5">
+                        <p>The next instruction we need to replicate without 0's is a little more complicated because it has an actual value. There's actually two solutions that we can use for this. Both start by <b>xor</b>ing the <b>eax</b> register. The next and last step is to choose between two instructions: <b>inc</b> and <b>mov</b>. <b>inc</b> is an instruction to increment the value in the register which would make the value in <b>eax</b> go from 0 to 1. The <b>mov</b> instruction requires a little trick, otherwise we'd end up with the same null bytes as before. 32-bit registers are actually made up of smaller registers which you can see to the right.</p>
+                    </div>
+                    <div class="col-sm-7">
+                    <pre><code class="nohighlight">eax (First 32-bits): 1111 1110 1101 1100 1011 1010 1001 1000
+ax (First 16-bits): 1011 1010 1001 1000
+ah (Most Significant 8-bits): 1011 1010
+al (Least Significant 8-bits): 1001 1000</code></pre>
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>Looking at the registers breakdown we can see that we can actually address the single least significant byte of a register. We can now move any value less than 256 into this location. Since we only want a 1 into the register so it's fine to move it into the sub-register of <b>al</b>. Let's compile this and look at the bytecode.</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="x86asm hljs">xor %ebx, %ebx
+mov $0x1, %al
+int $0x80</code></pre></div>
+                </div>
+            </div>
+            </div>
+
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                        <pre><code class="x86asm hljs">080483db &lt;main&gt;:
+ 80483db:       31 db                   xor    ebx,ebx
+ 80483dd:       b0 01                   mov    al,0x1
+ 80483df:       cd 80                   int    0x80
+</code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <p>Our bytecode now is totally different and also much shorter. You can also see that there are no null bytes which is extremely helpful.</p>
+            </div>
+        </div>
+        </div>
+
+        <h3 class="text-center">Making Something Useful</h3>
+        <div class="row bottom-pad" id="assembly">
+        <div class="col-sm-3 col-sm-offset-3">
+                <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
+
+int main() {
+
+    char *shell[2];
+
+    shell[0] = "/bin/sh";
+    shell[1] = NULL;
+
+    execve(shell[0], shell, NULL);
+    return 0;
+}
+
+
+</code></pre>
+            </div>
+            <div class="col-sm-3">
+                <pre><code class="x86asm hljs">.text
+.global main
+
+main:
+    mov $0x0b, %eax
+    push $0x0068732f
+    push $0x6e69622f
+    mov %esp, %ebx
+    mov $0x0, %ecx
+    push %ecx
+    push %ebx
+    mov %esp, %ecx
+    mov $0x0, %edx
+    int $0x80</code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <p>The above code will become our shellcode when we're done taking out the null bytes. First I should clarify that the key piece here is <b>execve</b>. <b>execve</b> is a syscall that executes a binary pointed to by the filepath. Running the <b>man</b> command on it will show us that <b>execve</b> has 3 paramaters: char *filename, char *argv[], and char *envp. So to break this down, the char* to the filename is the full path to the binary file which in our case will be <b>/bin/sh</b> which will give us the shell. The second parameter is a pointer to all the arguments for the function which would be a char**, this can actually be NULL, but the shellcode will fail on some systems. The last paramater is a char* to the environment variables which we don't care about so we can actually make it NULL. </p>
+                    </div>
+                    <div class="col-sm-4">
+                        <pre><code class="cpp hljs">
+execve(shell[0], shell, NULL);
+
+</code></pre></div>
                 </div>
             </div>
         </div>
         <div class="row" id="format-strings">
             <h2 class="text-center"><b>Format Strings</b></h1>
-                <h3 class="text-center">Coming Soon!</h2>
+            <h3 class="text-center">Coming Soon!</h2>
         </div>
         <div class="row" id="rop">
             <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
                 <h3 class="text-center">Coming Soon!</h2>
         </div>
         <div class="row" id="heap-exploit">
-            <h2 class="text-center"><b>Heap Exploitation</b></h1>
-                <h3 class="text-center">I'm not great at heaps. Coming not so soon!</h3>
-                <h3 class="text-center">In the mean time, check out Shellphish's <a href="https://github.com/shellphish/how2heap">how2heap</a>.</h3>
+            <h2 class="text-center"><b>Heap Exploitation</b></h2>
+            <h3 class="text-center">I'm not great at heaps. Coming not so soon!</h3>
+            <h3 class="text-center">In the mean time, check out Shellphish's <a href="https://github.com/shellphish/how2heap">how2heap</a>.</h3>
         </div>
     </div>
     <script src="../js/vendor/modernizr-3.5.0.min.js"></script>

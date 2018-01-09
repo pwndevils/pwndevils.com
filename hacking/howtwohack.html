@@ -1152,10 +1152,49 @@ $
                             <p>When a function is called its parameters are pushed to the stack. But now the format string is missing a parameter, but C and C++ don't care about that. When a function like <b>printf</b> is called even if the format string doesn't have the correct parameters, it'll still look up the stack and use the value of where it believes the paramter to be. We can actually use this to leak values on the stack!</p>
                         </div>
                     </div>
+                    <h3 class="text-center">Tips And Tricks</h3>
                     <div class="row">
                         <div class="col-sm-6 col-sm-offset-3">
-                            <p></p>
+                            <p>There's some special formats in format strings that'll help us achieve our goals much faster. The first of which is <b>%i$p</b> as opposed to <b>%p</b>. If I didn't mention before, <b>%p</b> prints out a pointer. The difference in the syntax is that <b>i$</b> is now in there. <b>i</b> is a place holder for any integer. What do you think this does? This allows to reference the <b>i<sup>th</sup></b> argument instead of having to write multiple <b>%p</b>'s to get to the specific argument that you want (This works much like array indexing the argv).</p>
+                            <p>The next trick is very similar. Instead of <b>%p</b> we can do <b>%kp</b> where <b>k</b> represents an arbitrary integer. The <b>k</b> is the number of times we want the format to be repeated (This is close to python's string multiplier). If we wrote <b>%4p</b> then it'd be equivalent to writing <b>%p%p%p%p</b>.</p>
+                            <p>This last point is essential and uses the format <b>%n</b>. <b>%n</b> can be used to write to a location, but it's important to note that it only writes the value of the amount of bytes that precede it. For example: <b>printf("Hello%n", &amp;len);</b> will write the value of 5 into the variable len because the amount of bytes that precede it is 5.</p>
                         </div>
+                    </div>
+                    <h3 class="text-center">Find The Vulnerability</h3>
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <pre><code class="cpp">#include &lt;stdio.h&gt; 
+#include &lt;stdlib.h&gt; 
+int main(int argc, char const *argv[]) {  
+    FILE* f; 
+    f = fopen("/tmp/log", "a+");  
+    add_log(f);  
+    fclose(f);  
+    return 0; 
+}
+int add_log(FILE* f) {  
+    char line[65536];
+    int i = 0, res;
+    while (1) {
+        res = read(0, &amp;line[i], 1);   
+        if (res == 0) exit(1);   
+        i++;
+        if (i == 65536) exit(1);   
+        if (line[i - 1] == '\n') { 
+            line[i] = '\0';   
+            break;   
+        }  
+    }  
+    fprintf(f, line);  
+    return 0; 
+}
+</code></pre>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 col-sm-offset-3">
+                        <p></p>
                     </div>
                 </div>
             </div>

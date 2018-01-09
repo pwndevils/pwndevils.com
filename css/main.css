@@ -177,7 +177,9 @@ h3 {
 @media (max-width: @screen-sm) {
     h3{font-size: 14px;}
 }
-
+@media only screen and (max-width: 500px) {
+    pre code{font-size: 0.9em;}
+}
 @media only screen and (max-width: 500px) {
     .mobile-margin-left {
         margin-left: 5%;

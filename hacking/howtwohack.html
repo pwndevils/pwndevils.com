@@ -724,10 +724,12 @@ void notCalled() {
             </ul>
         </div>
     </div>
+     <!-- 
+        This is the terminal code for websocket docker
     <h3 class="text-center bottom-pad">Let's Try It Out!</h3>
     <div class="row mobile-margin-left-small mobile-margin-right-small bottom-pad">
         <div class="col-sm-6 col-sm-offset-3 well" id="terminal"></div>
-    </div>
+    </div> -->
     <div class="row" id="shellcode">
         <h2 class="text-center"><b>Shellcode</b></h1>
             <h3 class="text-center">What is it?</h2>
@@ -876,7 +878,7 @@ int $0x80</code></pre></div>
 </code></pre>
         </div>
     </div>
-    <div class="row">
+    <div class="row bottom-pad">
         <div class="col-sm-6 col-sm-offset-3">
             <p>Our bytecode now is totally different and also much shorter. You can also see that there are no null bytes which is extremely helpful.</p>
         </div>
@@ -1148,11 +1150,25 @@ $
     <div class="row">
         <div class="col-sm-6 col-sm-offset-3">
             <p>We did it! We put our shellcode at the beginning of the input and then padded it with 51 bytes because it's 76 bytes to the <b>saved eip</b> and our shellcode is 25 bytes. Now we just add the 4 byte address of the beginning of our buffer and then we get a shell.</p>
+            <p>More Challenges On Their Way!</p>
         </div>
     </div>
     <div class="row" id="format-strings">
         <h2 class="text-center"><b>Format Strings</b></h2>
-        <h3 class="text-center">Coming Soon!</h3>
+        <h3 class="text-center">Why Do They Exist?</h3>
+        <div class="row">
+            <div class="col-sm-4 col-sm-offset-4">
+                <pre><code class="cpp">
+                printf("Hello %s!\n", name);
+                printf(buf);
+            </code></pre>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <p>C and C++ have what are called <b>format strings</b>. Format strings are in the format of ("%s", var) where the var is some string. There are actually several other common and uncommon format specifiers: %s for strings, %c for chars, %d for decimals, %f for floats, %x for hex representation, and %n for writing to the variable. So where does the vulnerability come in? Look at the first line of code, we have a format specifier and a variable attached that the specifier will use. The second line has no specifier. It will simply print out whatever is in the variable. This poses a very big problem because what would happen if in the buf variable it contained a string that looked like this: "Format %d". This is actually also interpreted as a format string as well, but if you compare the two formats you'll see that the second is missing a variable to read from. The key is what we learned about the cdecl calling convention. When a function is called its parameters are pushed to the stack. But now the format string is missing a parameter, but C and C++ don't care about that. When a function like <b>printf</b> is called even if the format string doesn't have the correct parameters, it'll still look up the stack and use the value of where it believes the paramter to be. We can actually use this to leak values on the stack!</p>
+            </div>
+        </div>
     </div>
     <div class="row" id="rop">
         <h2 class="text-center"><b>ROP: Return Oriented Programming</b></h2>
@@ -1177,6 +1193,7 @@ $
     <script>
     hljs.initHighlightingOnLoad();
     </script>
+    <!-- Terminal docker websocket code
     <script>
     var term = new Terminal({
         cursorBlink: true,
@@ -1220,7 +1237,7 @@ $
         }
 
     }
-    </script>
+    </script> -->
     <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
     <!-- <script> -->
     <!--     window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date; -->

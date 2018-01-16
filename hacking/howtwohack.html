@@ -258,28 +258,14 @@ mov 0x8049634, eax</code></pre></div>
                 <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>. It keeps track of where exactly we are on the stack in memory.</p>
                 <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4. Take note, that the stack starts at high memory addresses and grows to low memory address. Our starting value here is at 0x10000 as shown in the bottom left. When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case). Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
             </div>
-            <div class="col-sm-4 well  mobile-margin-left-small mobile-margin-right-small">
+            <div class="col-sm-4  mobile-margin-left-small mobile-margin-right-small">
                 <div class="container-fluid" style="padding: 0;">
-                    <div class="row">
-                        <div class="col-sm-5 col-sm-offset-3 bottom-pad">
-                            <h5 class="text-center">0xFFFFFFFF</h5>
-                            <div class="stack-loc" id="main-ex-stack">... &nbsp; &nbsp; ... Garbage</div>
-                            <h5 class="text-center">0x00000000</h5>
-                        </div>
-                        <div class="col-sm-3" style="margin-top: 35px;">
-                            <div class="row">
-                                <pre><code class="x86asm" id="stack-example-asm">push eax
+                    <stack>
+                        <data>..., , , ..., Garbage</data>
+                        <regs>eax: 0xa, ebx:, esp: 0x10000</regs>
+                        <pre><code>push eax
 pop ebx</code></pre>
-                                <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="stack-test-button">Start</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-5" id="register-ex-stack">
-                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax ebx esp</div>
-                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">0xa &nbsp; 0x10000</div>
-                        </div>
-                    </div>
+                    </stack>
                 </div>
             </div>
         </div>
@@ -356,17 +342,12 @@ movl [ebp-0x8], 0x64</code></pre>
         </div>
         <h3 class="text-center">Local Variable Example</h3>
         <div class="row bottom-pad  ">
-            <div class="col-sm-4 col-sm-offset-4 well mobile-margin-left-small mobile-margin-right-small">
+            <div class="col-sm-4 col-sm-offset-4 mobile-margin-left-small mobile-margin-right-small">
                 <div class="container-fluid" style="padding: 0;">
-                    <div class="row">
-                        <div class="col-sm-5 col-sm-offset-2 bottom-pad">
-                            <h5 class="text-center">0xFFFFFFFF</h5>
-                            <div class="stack-loc" id="local-var-ex-stack">..... &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-                            <h5 class="text-center">0x00000000</h5>
-                        </div>
-                        <div class="col-sm-5" style="margin-top: 35px;">
-                            <div class="row">
-                                <pre><code class="x86asm" id="local-var-ex-asm">mov ebp, esp
+                    <stack>
+                        <data>....., , , , , </data>
+                        <regs>eax: , esp: 0x10000, ebp: </regs>
+                        <pre><code class="x86asm" id="local-var-ex-asm">mov ebp, esp
 sub esp, 0x10
 movl [ebp-0xc], 0xa
 movl [ebp-0x8], 0x64
@@ -374,19 +355,7 @@ mov eax, 0x41273333
 mov [ebp-0x4], eax
 mov eax, [ebp-0x8]
 add [ebp-0xc], eax</code></pre>
-                                <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="local-var-test-button">Start</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-5" id="register-local-ex-stack">
-                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp</div>
-                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10000 &nbsp;</div>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 10px;">
-                        <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
-                    </div>
+                    </stack>
                 </div>
             </div>
         </div>
@@ -475,17 +444,12 @@ call callee</code></pre>
         </div>
         <h3 class="text-center">Calling Convention Example</h3>
         <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
-            <div class="col-sm-6 col-sm-offset-3 well">
+            <div class="col-sm-6 col-sm-offset-3">
                 <div class="container-fluid" style="padding: 0;">
-                    <div class="row">
-                        <div class="col-sm-4 col-sm-offset-3 bottom-pad">
-                            <h5 class="text-center">0xFFFFFFFF</h5>
-                            <div class="stack-loc" id="call-conv-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-                            <h5 class="text-center">0x00000000</h5>
-                        </div>
-                        <div class="col-sm-5" style="margin-top: 35px;">
-                            <div class="row">
-                                <pre><code class="x86asm" id="call-conv-ex-asm">callee:
+                    <stack>
+                        <data>, , , , , , , , , , </data>
+                        <regs>eax: , edx: , esp: 0x10004, ebp: 0x100a0, eip: </regs>
+                        <pre><code class="x86asm" id="call-conv-ex-asm">callee:
     push ebp                ;0x8048394
     mov ebp, esp            ;0x8048395
     mov eax, [ebp+0xc]      ;0x8048397
@@ -505,19 +469,7 @@ main:
     mov eax, [ebp-0x4]      ;0x80483c2
     leave                   ;0x80483c5
     ret                     ;0x80483c6</code></pre>
-                                <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="call-conv-test-button">Start</button>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-5" id="register-call-conv-ex-stack">
-                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax edx esp ebp eip</div>
-                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; &nbsp; 0x10004 0x100a0 0x80483a5</div>
-                        </div>
-                    </div>
-                    <div class="row" style="margin-top: 10px;">
-                        <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
-                    </div>
+                    </stack>
                 </div>
             </div>
         </div>
@@ -597,17 +549,12 @@ main:
             </div>
             <h3 class="text-center">Overflow Example</h3>
             <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
-                <div class="col-sm-6 col-sm-offset-3 well">
+                <div class="col-sm-6 col-sm-offset-3">
                     <div class="container-fluid" style="padding: 0;">
-                        <div class="row">
-                            <div class="col-sm-4 col-sm-offset-3 bottom-pad">
-                                <h5 class="text-center">0xFFFFFFFF</h5>
-                                <div class="stack-loc" id="overflow-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-                                <h5 class="text-center">0x00000000</h5>
-                            </div>
-                            <div class="col-sm-5" style="margin-top: 35px;">
-                                <div class="row">
-                                    <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
+                        <stack>
+                            <data> , , , , , , , , , ,</data>
+                            <regs>eax: , esp: 0x10004, ebp: 0x100a0, eip: </regs>
+                            <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
     push ebp                   ;0x80483f4
     mov ebp, esp               ;0x80483f5
     sub esp, 0x28              ;0x80483f7
@@ -630,20 +577,7 @@ main:
     mov eax, 0x0               ;0x8048430
     leave                      ;0x8048435
     ret                        ;0x8048436</code></pre>
-                                    <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
-                                    <p class="text-center hidden" id="segfault-overflow" style="color: red;"><b>SEGFAULT: 0x22313032</b></p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-5" id="register-overflow-ex-stack">
-                                <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp eip</div>
-                                <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10004 0x100a0 0x804840e</div>
-                            </div>
-                        </div>
-                        <div class="row" style="margin-top: 10px;">
-                            <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
-                        </div>
+                        </stack>
                     </div>
                 </div>
             </div>
@@ -1161,7 +1095,7 @@ $
                         </div>
                     </div>
                     <h3 class="text-center">Find The Vulnerability</h3>
-                    <div class="row">
+                    <div class="row bottom-pad">
                         <div class="col-sm-4 col-sm-offset-4">
                             <pre><code class="cpp">#include &lt;stdio.h&gt; 
 #include &lt;stdlib.h&gt; 
@@ -1191,6 +1125,11 @@ int add_log(FILE* f) {
 </code></pre>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-sm-6 col-sm-offset-3">
+                            <p>Do you see it? Remember that the vulnerability occurs when we have a variable put in with no format string. Now you can see it at the bottom <b>fprintf(f, line)</b>.</p>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
                     <div class="col-sm-6 col-sm-offset-3">
@@ -1215,6 +1154,7 @@ int add_log(FILE* f) {
         </script>
         <script src="../js/plugins.js"></script>
         <script src="../js/main.js"></script>
+        <script src="../js/x86asm.js"></script>
         <script src="../xterm/xterm.js"></script>
         <script src="../xterm/attach/attach.js"></script>
         <script src="../highlight/highlight.pack.js"></script>

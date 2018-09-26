@@ -155,17 +155,35 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-sm-4">
-                <div class="col-sm-12 well">
-                    <h2 class="text-center">Resources</h2>
-                    <p class="left-margin">Disk or Network Traffic captures that have some form of interesting conversation or data.
-                        <br>Sections:</br>
+            <div class="col-sm-12 well">
+                <h2 class="text-center">Resources</h2>
+                <h4 class="text-center">Below are several resources that we thought might be helpful to everyone, whether you are a beginner or a veteran!</h4>
+                <div class="col-sm-4">
+                    
+                    <p class="left-margin">
+                        <br>Binary Exploitation:</br>
                         <ul>
-                            <li>Tools</li>
-                            <li>Physical Storage</li>
-                            <li>Network Traffic</li>
-                            <li>Partial Data Recovery</li>
-                            <li>Time Stamp Manipulation</li>
+                            <li><a href="https://www.amazon.com/Hacking-Art-Exploitation-Jon-Erickson/dp/1593271441"><i>Hacking: The Art of Exploitation</i></a> This is a great resource for those just starting out with binary exploitation. It contains an awesome guide and many examples.</li>
+                            <li><a href="https://github.com/RPISEC/MBE">RPI SEC's Modern Binary Analysis</a> github is another great resource, but it is faster paced than the book above.</li>
+                        </ul>
+                        <br></br>
+                    </p>
+                </div>
+                <div class="col-sm-4">
+                    <p class="left-margin">
+                        <br>War Games:</br>
+                        <ul>
+                            <li><a href="https://github.com/zardus/wargame-nexus">Zardus' Wargame Nexus</a> You'd have a difficult time finding any worth-while wargames that aren't on this list created by our very own Zardus! A Wargame is a site or platform that allows you to have an account and save your progress as you move through challenges. These are organized by category and skill required so you can just pick one and get going!</li>
+                        </ul>
+                        <br></br>
+                    </p>
+                </div>
+                <div class="col-sm-4">
+                    <p class="left-margin">
+                        <br>Web Exploitation:</br>
+                        <ul>
+                            <li><a href="https://google-gruyere.appspot.com/ ">Google Gruyere</a> Is a vulnerable website/tutorial that has many different web vulnerabilities for you to try your hand at.</li>
+                            <li><a href="http://www.dvwa.co.uk/">Damn Vulnerable Web App</a> is another great resource. It requires that you set up an instance on your own machine, but it has several straightforward tasks with different levels.</li>
                         </ul>
                         <br></br>
                     </p>
@@ -276,14 +294,28 @@ mov 0x8049634, eax</code></pre></div>
                 <p>On the bottom left, there are x86 register names as well as the corresponding values in those registers. We've seen <b>eax</b> and <b>ebx</b> before, but what's <b>esp</b>? The <b>esp</b> is the <b>Stack Register</b>. It keeps track of where exactly we are on the stack in memory.</p>
                 <p>The stack is divided into sections of 4 bytes also known as a word. This means that each time the stack value changes it's by a multiple of 4. Take note, that the stack starts at high memory addresses and grows to low memory address. Our starting value here is at 0x10000 as shown in the bottom left. When we push what is in <b>eax</b> onto the stack, the value of the stack point is decremented by 4 because it is growing towards lower memory. Then when we pop <b>ebx</b>, it means that the value at the stack pointer is moved into the specified register (<b>ebx</b> in this case). Then, the memory that the location was taking up is deallocated by moving the pointer back a word.</p>
             </div>
-            <div class="col-sm-4  mobile-margin-left-small mobile-margin-right-small">
+            <div class="col-sm-4 well  mobile-margin-left-small mobile-margin-right-small">
                 <div class="container-fluid" style="padding: 0;">
-                    <stack>
-                        <data>..., , , ..., Garbage</data>
-                        <regs>eax: 0xa, ebx:, esp: 0x10000</regs>
-                        <pre><code>push eax
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-3 bottom-pad">
+                            <h5 class="text-center">0xFFFFFFFF</h5>
+                            <div class="stack-loc" id="main-ex-stack">... &nbsp; &nbsp; ... Garbage</div>
+                            <h5 class="text-center">0x00000000</h5>
+                        </div>
+                        <div class="col-sm-3" style="margin-top: 35px;">
+                            <div class="row">
+                                <pre><code class="x86asm" id="stack-example-asm">push eax
 pop ebx</code></pre>
-                    </stack>
+                                <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="stack-test-button">Start</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5" id="register-ex-stack">
+                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax ebx esp</div>
+                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">0xa &nbsp; 0x10000</div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -360,12 +392,17 @@ movl [ebp-0x8], 0x64</code></pre>
         </div>
         <h3 class="text-center">Local Variable Example</h3>
         <div class="row bottom-pad  ">
-            <div class="col-sm-4 col-sm-offset-4 mobile-margin-left-small mobile-margin-right-small">
+            <div class="col-sm-4 col-sm-offset-4 well mobile-margin-left-small mobile-margin-right-small">
                 <div class="container-fluid" style="padding: 0;">
-                    <stack>
-                        <data>....., , , , , </data>
-                        <regs>eax: , esp: 0x10000, ebp: </regs>
-                        <pre><code class="x86asm" id="local-var-ex-asm">mov ebp, esp
+                    <div class="row">
+                        <div class="col-sm-5 col-sm-offset-2 bottom-pad">
+                            <h5 class="text-center">0xFFFFFFFF</h5>
+                            <div class="stack-loc" id="local-var-ex-stack">..... &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                            <h5 class="text-center">0x00000000</h5>
+                        </div>
+                        <div class="col-sm-5" style="margin-top: 35px;">
+                            <div class="row">
+                                <pre><code class="x86asm" id="local-var-ex-asm">mov ebp, esp
 sub esp, 0x10
 movl [ebp-0xc], 0xa
 movl [ebp-0x8], 0x64
@@ -373,7 +410,19 @@ mov eax, 0x41273333
 mov [ebp-0x4], eax
 mov eax, [ebp-0x8]
 add [ebp-0xc], eax</code></pre>
-                    </stack>
+                                <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="local-var-test-button">Start</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5" id="register-local-ex-stack">
+                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp</div>
+                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10000 &nbsp;</div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -462,12 +511,17 @@ call callee</code></pre>
         </div>
         <h3 class="text-center">Calling Convention Example</h3>
         <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
-            <div class="col-sm-6 col-sm-offset-3">
+            <div class="col-sm-6 col-sm-offset-3 well">
                 <div class="container-fluid" style="padding: 0;">
-                    <stack>
-                        <data>, , , , , , , , , , </data>
-                        <regs>eax: , edx: , esp: 0x10004, ebp: 0x100a0, eip: </regs>
-                        <pre><code class="x86asm" id="call-conv-ex-asm">callee:
+                    <div class="row">
+                        <div class="col-sm-4 col-sm-offset-3 bottom-pad">
+                            <h5 class="text-center">0xFFFFFFFF</h5>
+                            <div class="stack-loc" id="call-conv-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                            <h5 class="text-center">0x00000000</h5>
+                        </div>
+                        <div class="col-sm-5" style="margin-top: 35px;">
+                            <div class="row">
+                                <pre><code class="x86asm" id="call-conv-ex-asm">callee:
     push ebp                ;0x8048394
     mov ebp, esp            ;0x8048395
     mov eax, [ebp+0xc]      ;0x8048397
@@ -487,7 +541,19 @@ main:
     mov eax, [ebp-0x4]      ;0x80483c2
     leave                   ;0x80483c5
     ret                     ;0x80483c6</code></pre>
-                    </stack>
+                                <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="call-conv-test-button">Start</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-5" id="register-call-conv-ex-stack">
+                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax edx esp ebp eip</div>
+                            <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; &nbsp; 0x10004 0x100a0 0x80483a5</div>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -567,12 +633,17 @@ main:
             </div>
             <h3 class="text-center">Overflow Example</h3>
             <div class="row bottom-pad mobile-margin-left-small mobile-margin-right-small">
-                <div class="col-sm-6 col-sm-offset-3">
+                <div class="col-sm-6 col-sm-offset-3 well">
                     <div class="container-fluid" style="padding: 0;">
-                        <stack>
-                            <data> , , , , , , , , , ,</data>
-                            <regs>eax: , esp: 0x10004, ebp: 0x100a0, eip: </regs>
-                            <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
+                        <div class="row">
+                            <div class="col-sm-4 col-sm-offset-3 bottom-pad">
+                                <h5 class="text-center">0xFFFFFFFF</h5>
+                                <div class="stack-loc" id="overflow-ex-stack">&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
+                                <h5 class="text-center">0x00000000</h5>
+                            </div>
+                            <div class="col-sm-5" style="margin-top: 35px;">
+                                <div class="row">
+                                    <pre><code class="x86asm" id="overflow-ex-asm">mycpy: 
     push ebp                   ;0x80483f4
     mov ebp, esp               ;0x80483f5
     sub esp, 0x28              ;0x80483f7
@@ -595,7 +666,20 @@ main:
     mov eax, 0x0               ;0x8048430
     leave                      ;0x8048435
     ret                        ;0x8048436</code></pre>
-                        </stack>
+                                    <button type="button" class="btn btn-success btn-lg center-block" style="margin-bottom: 10px;" id="overflow-test-button">Start</button>
+                                    <p class="text-center hidden" id="segfault-overflow" style="color: red;"><b>SEGFAULT: 0x22313032</b></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-5" id="register-overflow-ex-stack">
+                                <div class="stack-loc" style="float: left; display: inline; width: 50%;">eax esp ebp eip</div>
+                                <div class="stack-loc" style="float: left; display: inline; width: 50%;">&nbsp; 0x10004 0x100a0 0x804840e</div>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <p class="text-center">Note: The blue highlight is the <b>ebp</b> and the yellow is <b>esp</b> on the stack.</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1104,54 +1188,10 @@ $
                             <p>When a function is called its parameters are pushed to the stack. But now the format string is missing a parameter, but C and C++ don't care about that. When a function like <b>printf</b> is called even if the format string doesn't have the correct parameters, it'll still look up the stack and use the value of where it believes the paramter to be. We can actually use this to leak values on the stack!</p>
                         </div>
                     </div>
-                    <h3 class="text-center">Tips And Tricks</h3>
                     <div class="row">
                         <div class="col-sm-6 col-sm-offset-3">
-                            <p>There's some special formats in format strings that'll help us achieve our goals much faster. The first of which is <b>%i$p</b> as opposed to <b>%p</b>. If I didn't mention before, <b>%p</b> prints out a pointer. The difference in the syntax is that <b>i$</b> is now in there. <b>i</b> is a place holder for any integer. What do you think this does? This allows to reference the <b>i<sup>th</sup></b> argument instead of having to write multiple <b>%p</b>'s to get to the specific argument that you want (This works much like array indexing the argv).</p>
-                            <p>The next trick is very similar. Instead of <b>%p</b> we can do <b>%kp</b> where <b>k</b> represents an arbitrary integer. The <b>k</b> is the number of times we want the format to be repeated (This is close to python's string multiplier). If we wrote <b>%4p</b> then it'd be equivalent to writing <b>%p%p%p%p</b>.</p>
-                            <p>This last point is essential and uses the format <b>%n</b>. <b>%n</b> can be used to write to a location, but it's important to note that it only writes the value of the amount of bytes that precede it. For example: <b>printf("Hello%n", &amp;len);</b> will write the value of 5 into the variable len because the amount of bytes that precede it is 5.</p>
+                            <p></p>
                         </div>
-                    </div>
-                    <h3 class="text-center">Find The Vulnerability</h3>
-                    <div class="row bottom-pad">
-                        <div class="col-sm-4 col-sm-offset-4">
-                            <pre><code class="cpp">#include &lt;stdio.h&gt; 
-#include &lt;stdlib.h&gt; 
-int main(int argc, char const *argv[]) {  
-    FILE* f; 
-    f = fopen("/tmp/log", "a+");  
-    add_log(f);  
-    fclose(f);  
-    return 0; 
-}
-int add_log(FILE* f) {  
-    char line[65536];
-    int i = 0, res;
-    while (1) {
-        res = read(0, &amp;line[i], 1);   
-        if (res == 0) exit(1);   
-        i++;
-        if (i == 65536) exit(1);   
-        if (line[i - 1] == '\n') { 
-            line[i] = '\0';   
-            break;   
-        }  
-    }  
-    fprintf(f, line);  
-    return 0; 
-}
-</code></pre>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-sm-6 col-sm-offset-3">
-                            <p>Do you see it? Remember that the vulnerability occurs when we have a variable put in with no format string. Now you can see it at the bottom <b>fprintf(f, line)</b>.</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-sm-6 col-sm-offset-3">
-                        <p></p>
                     </div>
                 </div>
             </div>
@@ -1172,7 +1212,6 @@ int add_log(FILE* f) {
         </script>
         <script src="../js/plugins.js"></script>
         <script src="../js/main.js"></script>
-        <script src="../js/x86asm.js"></script>
         <script src="../xterm/xterm.js"></script>
         <script src="../xterm/attach/attach.js"></script>
         <script src="../highlight/highlight.pack.js"></script>

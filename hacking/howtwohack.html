@@ -154,6 +154,24 @@
                 </div>
             </div>
         </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="col-sm-12 well">
+                    <h2 class="text-center">Resources</h2>
+                    <p class="left-margin">Disk or Network Traffic captures that have some form of interesting conversation or data.
+                        <br>Sections:</br>
+                        <ul>
+                            <li>Tools</li>
+                            <li>Physical Storage</li>
+                            <li>Network Traffic</li>
+                            <li>Partial Data Recovery</li>
+                            <li>Time Stamp Manipulation</li>
+                        </ul>
+                        <br></br>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="binary-exploit" class="container-fluid bottom-pad">
         <h1 class="text-center bottom-pad parallax" style="padding-top: 40px;"><b>Binary Exploitation</b></h1>
@@ -651,7 +669,7 @@ main:
                 <div class="col-sm-6 col-sm-offset-3">
                     <p>As the text at the end of the example states, there would be a segfault when the program returns. Why? It's actually pretty easy to understand. When the program calls <b>strcpy</b> it writes the string to the specified location on the stack which happens to be <b>ebp-0xc</b> which is also <b>0xffdc</b>. However, the string that's written to that location is much larger than four characters. This doesn't stop <b>strcpy</b> though. There's nothing that tells it not to write the entire string so it does. In the process, it overwrites what was previously on the stack. If you look at what is on the stack when strcpy is called you will see the <b>saved ebp</b> directly above where the <b>ebp</b> register points to. The <b>saved ebp</b> is the value of <b>ebp</b> from the previous function. Directly above that is what's called the <b>saved eip</b> which is the address of the instruction that we should return to when we finish this function.</p>
                     <p>Now, when <b>strcpy</b> is called look at what happens to those values. They get completely overwritten by the contents of the string. Watch what happens when <b>leave</b> and <b>ret</b> are called. The value that is in <b>ebp</b> when leave is called is actually the little-endian value of the ascii in that location. The same is true of <b>eip</b> when <b>ret</b> is called. This means that the <b>eip</b> tries to go to the location of the instruction that is actually the little-endian ascii characters which is definitely not a valid address.</p>
-                    <p><b>P.S.</b> In x86, all values are actually little endian which means the most significant byte is actually the least significat byte. For example: the value of the string "step" is 0x73746570 to make this little-endian just reverse the byte order so it becomes 0x70657473.</p>
+                    <p><b>P.S.</b> In x86, all values are actually little endian which means the most significant byte is actually the least significant byte. For example: the value of the string "step" is 0x73746570 to make this little-endian just reverse the byte order so it becomes 0x70657473.</p>
                 </div>
             </div>
             <h3 class="text-center bottom-pad">Calling Things You Shouldn't</h3>
@@ -1182,57 +1200,6 @@ $
         <script>
         hljs.initHighlightingOnLoad();
         </script>
-        <!-- Terminal docker websocket code
-    <script>
-    var term = new Terminal({
-        cursorBlink: true,
-        rows: 20,
-        tabStopWidth: 4
-    });
-    //var socket = new WebSocket('wss://docker.example.com/containers/mycontainerid/attach/ws');
-    //var socket = new WebSocket('ws://192.168.99.100:31337', true);
-    var socket = new WebSocket('ws://echo.websocket.org', true);
-    socket.binaryType = 'arraybuffer';
-    //term.attach(socket, true, true);
-    term.open(document.getElementById('terminal'), false);
-    var user = ' \033[1;3;31mbuffer@overflow\033[0m:\033[1;34m~\033[0m\033[1;32m$\033[0m ';
-    term.write(user);
-    var currInput = '';
-    var allData = '';
-    term.textarea.onkeydown = function(e) {
-        //console.log('User pressed key with keyCode: ', e.keyCode, e.key);
-        if (e.keyCode == 13) { //Enter
-            term.writeln('');
-            term.write(user);
-            if (currInput === 'clear') {
-                term.clear();
-            }
-            currInput = '';
-        } else if (e.keyCode == 8) { //BackSpace
-            term.write('\r');
-            currInput = currInput.slice(0, -1);
-            term.write(user + currInput + ' ');
-            term.write('\r');
-            term.write(user + currInput);
-        } else if (e.keyCode == 16) { //Shift
-            //Do Nothing
-        } else if (e.keyCode == 17) { //Control
-            //Do Nothing
-        } else if (e.keyCode == 18) { //Alt
-            //Do Nothing
-        } else {
-            term.write(e.key);
-            currInput += e.key;
-        }
-
-    }
-    </script> -->
-        <!-- Google Analytics: change UA-XXXXX-Y to be your site's ID. -->
-        <!-- <script> -->
-        <!--     window.ga=function(){ga.q.push(arguments)};ga.q=[];ga.l=+new Date; -->
-        <!--     ga('create','UA-XXXXX-Y','auto');ga('send','pageview') -->
-        <!-- </script> -->
-        <!-- <script src="https://www.google-analytics.com/analytics.js" async defer></script> -->
 </body>
 
 </html>

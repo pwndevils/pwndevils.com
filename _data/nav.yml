@@ -1,0 +1,13 @@
+list:
+  - title: Home
+    url: ""
+  - title: About
+    url: about
+  - title: Contact Us
+    url: contact_us
+  - title: Lessons/Writeups
+    url: lessons
+  - title: Calendar
+    url: calendar
+    
+

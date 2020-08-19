@@ -1,0 +1,45 @@
+title: pwndevils
+markdown: kramdown
+url: "edaganis-eboz.github.io"
+baseurl: ""
+#NEED TO PUT DOMAIN NAME HERE
+
+# for atom feed
+author:
+  name: Erin Ozcan
+  email: ebozcan@asu.edu
+
+plugins:
+  - jekyll-paginate
+  - jemoji
+  - jekyll-seo-tag
+  - jekyll-sitemap
+  - jekyll-feed
+
+paginate_path: "/page:num/"
+
+paginate: 5
+
+collections_dir: all_collections
+collections:
+  posts:
+    output: true
+  projects:
+    output: true
+  events:
+    output: true
+    permalink: /events/:path/
+    title: Events
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "post"
+  - scope:
+      path: "_posts"
+    values:
+      layout: "post"
+      permalink: /posts/:categories/:year/:month/:day/:title/
+
+exclude: ["sitemap.xml", "feed.xml", "LICENSE", "README.md"]

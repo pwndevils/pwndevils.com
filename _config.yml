@@ -1,13 +1,12 @@
 title: pwndevils
 markdown: kramdown
-url: "edaganis-eboz.github.io"
+url: "https://pwndevils.com"
 baseurl: ""
-#NEED TO PUT DOMAIN NAME HERE
 
 # for atom feed
 author:
-  name: Erin Ozcan
-  email: ebozcan@asu.edu
+  name: pwndevils
+  email: pwndevils@gmail.com
 
 plugins:
   - jekyll-paginate

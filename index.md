@@ -12,3 +12,5 @@ You have reached the amazingly awesome page of the pwndevils, a hacking group st
 {%endfor%}
 
 -->
+
+<iframe src="https://discordapp.com/widget?id=688584927373295700&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>

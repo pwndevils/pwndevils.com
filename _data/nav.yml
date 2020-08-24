@@ -9,5 +9,7 @@ list:
     url: lessons
   - title: Calendar
     url: calendar
+  - title: Resources
+    url: resources
     
 

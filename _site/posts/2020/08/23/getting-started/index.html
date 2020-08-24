@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>pwndevils | Getting Started</title>
+  <link rel="stylesheet" href="/assets/css/mark.css" />
+  <link rel="stylesheet" href="/assets/css/custom.css" />
+  <!-- PILL JS LOADER SYLE -->
+  <style>
+    #indicator {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      display: none;
+      background-color: #72b6b5;
+    }
+
+    .is-loading {
+      display: block;
+      animation: blink 1.5s linear infinite;
+    }
+
+    @keyframes blink {
+      from,
+      to {
+        background-color: #72b6b5;
+      }
+
+      50% {
+        background-color: #42b983;
+      }
+    }
+
+    #project-link {
+      display: block;
+      position: fixed;
+      padding: 8px;
+      top: 0;
+      right: 0;
+    }
+  </style>
+  <!-- PILL JS -->
+  <script src="/assets/js/pill.min.js"></script>
+  <script>
+    // this is for pill js as the normal link wont work
+    function openLink(url) {
+      window.open(url, "_blank");
+    }
+  </script>
+
+</head>
+
+  <body>
+    <div id="indicator"></div>
+    <div id="page">
+      <style>
+        .title {
+          padding: 5%;
+          color: #101417;
+          font-size: 18px;
+          font-weight: bold;
+          text-align: center;
+          background: #ffc72c;
+          display: grid;
+        }
+        .meta {
+          font-size: 0.7rem;
+          font-weight: normal;
+          text-transform: uppercase;
+        }
+      </style>
+      <!-- header -->
+      <header>
+	<a href="/">
+		<!-- <h3>pwndevils</h3> -->
+		<img src="../../../../../assets/photos/pwndevils_banner.jpg">
+	</a>
+</header>
+
+      <!-- nav -->
+      <nav>
+	
+		
+			<a href="/">Home</a>
+		
+	
+		
+			<a href="/about">About</a>
+		
+	
+		
+			<a href="/contact_us">Contact Us</a>
+		
+	
+		
+			<a href="/lessons">Lessons/Writeups</a>
+		
+	
+		
+			<a href="/calendar">Calendar</a>
+		
+	
+		
+			<a href="/resources">Resources</a>
+		
+	
+</nav>
+      <!-- page content -->
+      <main class="content">
+        <p class="title">
+          Getting Started <span class="meta">Written By mahaloz</span>
+        </p>
+        <h1 id="a-warm-welcome">A Warm Welcome</h1>
+<p>Welcome to your first few steps as a CTFer! In this post we attempt to give <strong>all levels</strong> of people a place to start for CTFing, whether that means you are a versed Linux nerd, or a very first user to the terminal. We love members of all skill and hope to help everyone in their journey to becoming a L33T haxor. Below you will find a series of statements that link to a section in this post. Start from the top of the statements and read down. The first statement that is true for you is the section you should start at.</p>
+
+<p>As you go about these section, remember you can always reach out to anyone on the <a href="https://discord.gg/MeMcTvj">Shellphish Discord</a> in the <code class="highlighter-rouge">#pwndevils</code> channel. We love to help new people learn!</p>
+
+<h1 id="starting-places">Starting Places</h1>
+<ol>
+  <li><a href="#starting-as-a-bit">Bit</a>: I don’t know what a VM or Linux is.</li>
+  <li><a href="#starting-as-a-byte">Byte</a>: I’m not confident with <strong>any</strong> of the following commands: <code class="highlighter-rouge">find</code>, <code class="highlighter-rouge">ssh</code>, <code class="highlighter-rouge">file</code>, or <code class="highlighter-rouge">grep</code>.</li>
+  <li><a href="#starting-as-a-kilobyte">Kilobyte</a>: I don’t know C or how to use C pointers.</li>
+  <li><a href="#starting-as-a-megabyte">Megabyte</a>: I don’t know an assembly language.</li>
+  <li><a href="#starting-as-a-gigabyte">Gigabyte</a>: I don’t know what a buffer overflow is.</li>
+</ol>
+
+<p>Say no to all the above statements? Then jump to <a href="#where-to-continue">Where To Continue</a></p>
+
+<h2 id="starting-as-a-bit">Starting As A Bit</h2>
+<p>New to CTFs and computer security in general? No problem, the pwndevils got you covered (we were all curious newbies at one point)! Starting at this point will mean you have a lot to learn to be able to efficiently play CTF’s, but that is ok!</p>
+
+<p>The first thing you are going to want to do is learn about virtual machines (VM). There is a nice video that explains what a VM is <a href="https://www.youtube.com/watch?v=yIVXjl4SwVo">here</a>. Once you are comfortable with what a VM is, we should talk about how to get one. The most straight forward option to setting up a VM on your machine is with VirtualBox. VirtualBox is free and open-source. There is a nice installation video <a href="https://www.youtube.com/watch?v=8mns5yqMfZk">here</a> or you can just check out the <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox Website</a>.</p>
+
+<p>Once you have VirtualBox setup, you are going to want to setup Ubuntu 20.04 on your VirtualBox. You can find another video to install Ubuntu on your VB <a href="https://www.youtube.com/watch?v=x5MhydijWmc">here</a>. After all of this is done, you now have a Linux machine running on your current computer! Yay! You have taken your first steps to becoming a leet hacker. Next you are going to need to learn how to use Ubuntu/Linux. Before you continue onto the next section, mess around with Linux and learn how to use the terminal a little. It will be useful. Check out <a href="https://www.youtube.com/watch?v=IVquJh3DXUA">this</a> video to learn some commands.</p>
+
+<p>Continue to the next “data” upgrade, <a href="#starting-as-a-byte">Byte</a>, to level up.</p>
+
+<h2 id="starting-as-a-byte">Starting as a Byte</h2>
+<p>Ah so you are a person of culture too. You know your ways around virtualization and you’ve probably messed around with Linux in the past. Well as a hacker you are going to need to level up your skill and get comfortable with <strong>MOAR</strong> virtualization and bash commands. Let’s start with the latter.</p>
+
+<h3 id="learning-to-bash">Learning to Bash</h3>
+<p>Learning to use the command line is crucial to being a good hacker. We, and CSE365 at ASU, recommends starting with <a href="https://overthewire.org/wargames/bandit/">Overthewire: Bandit</a>. Go on the Overthewire and complete Bandit challenges to learn more about being a leet linux hacker. At a minimum, you should complete levels <strong>0 - 15</strong>. You are free to complete all the challenges of Bandit if you want to be realllly leet, but you are not expected too.</p>
+
+<h3 id="moar-virtualization-docker">Moar Virtualization: Docker</h3>
+<p>Now that you know your way around the Linux terminal, we need to get just a little more virtualization into your Linux environment. In the modern development world <a href="https://www.youtube.com/watch?v=EnJ7qX9fkcU">containers</a> have become quite important to making portable software. The most used containerization software is called <a href="https://www.docker.com/">Docker</a>. You can thing of containers as a miniature VM that is a little faster than a full scale VirtualBox VM. Yes we are running a VM in a VM. VM-Ception. We use Docker a lot on pwndevils so you are going to want to <a href="https://docs.docker.com/engine/install/ubuntu/">install</a> and <a href="https://docs.docker.com/get-started/">learn</a> how to use it.</p>
+
+<p>After you have installed it, go ahead and pull our Docker Container that contains all our commonly used hacking tools: <a href="https://github.com/pwndevils/pwnbox">pwndevils/pwnbox</a>.</p>
+
+<p>Now that you can virtualize and Linux like a pro, it’s time to become a Kilobyte. Head to the next section.</p>
+
+<h2 id="starting-as-a-kilobyte">Starting as a Kilobyte</h2>
+<p>Starting as a Kilobyte means you already have some good Linux knowledge behind you, but you don’t know <code class="highlighter-rouge">C</code> – making it difficult to truly understand what is happening on the system level. When working with things on the system level (Firmware, Kernels, IOT Devices), <a href="https://www.geeksforgeeks.org/benefits-c-language-programming-languages/">we need to use C</a> to keep the program nice and efficient. It also so happens that C is a language that is not a <a href="https://en.wikipedia.org/wiki/Memory_safety">Memory Safe language</a>, making it a gold mine for hackers. You must gain this hacker insight.</p>
+
+<p>To gain this insight, you must learn the C programming language at a basic level. There are a lot of <code class="highlighter-rouge">C</code> guides out there. Here is <a href="https://www.tutorialspoint.com/cprogramming/c_quick_guide.htm">one</a>. We think you will be able to find more. We must emphasize that you need to learn <strong>C</strong> not <strong>C++</strong>. Since <code class="highlighter-rouge">C</code> is more low level, it will have much less high-level constructs than <code class="highlighter-rouge">C++</code>. Learn <code class="highlighter-rouge">C</code>. At a minimum know how to:</p>
+<ul>
+  <li>use loops</li>
+  <li>use functions</li>
+  <li>use if-statements</li>
+  <li>use structs</li>
+  <li>use unions</li>
+  <li>use pointers</li>
+</ul>
+
+<p>The last bullet-point is really important. Knowing how to use pointers in <code class="highlighter-rouge">C</code> is crucial to the topics that are covered in the next sections. Here is a <a href="https://www.tutorialspoint.com/cprogramming/c_pointers.htm">tutorial</a>. Go through all the sections and make sure you understand how addresses, references, copys, and pointers work. Spend a few hours/days on these concepts.</p>
+
+<p>Now that you can has C, it’s time to has assembly. Move to the next section young Megabyte.</p>
+
+<h2 id="starting-as-a-megabyte">Starting as a Megabyte</h2>
+<p>Starting as a Megabyte is a really good place to be as far as becoming a hacker is concerned. You have the ability to use <code class="highlighter-rouge">C</code> and the ability to mess around in Linux. It’s time we take your hacking to the-next-level <em>TM</em>. From here on, you are going to be learning how to understand programs at the fundamental level, so things will get a lot harder.</p>
+
+<h2 id="starting-as-a-gigabyte">Starting as a Gigabyte</h2>
+<p>TODO</p>
+
+<h1 id="where-to-continue">Where to continue?</h1>
+<p>At this point, you have come really far as a intro hacker. You now have the ability to understand programs at the fundamental level and mess around with how they work. You can do a lot at this moment, but there is so much more to learn to becoming a god-like hacker.</p>
+
+<p>Some pwndevils, and professors, joined together and created a education platform called <a href="https://pwn.college/">pwn.college</a>. This site, and it’s accompanying lectures, can teach you all the basic exploitation methods in binary exploitation. 
+TODO</p>
+
+      </main>
+
+      <!-- footer -->
+      <footer>
+
+<!--	<p>
+		This is a bio of me.
+	</p> -->
+
+	<p>
+		&copy 2020 | pwndevils
+	</p>
+</footer>
+<script src='/assets/js/site.js' id="pill_site_script" type='module'></script>
+
+    </div>
+  </body>
+</html>

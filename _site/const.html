@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>pwndevils | pwndevils Constitution</title>
+  <link rel="stylesheet" href="/assets/css/mark.css" />
+  <link rel="stylesheet" href="/assets/css/custom.css" />
+  <!-- PILL JS LOADER SYLE -->
+  <style>
+    #indicator {
+      position: fixed;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 3px;
+      display: none;
+      background-color: #72b6b5;
+    }
+
+    .is-loading {
+      display: block;
+      animation: blink 1.5s linear infinite;
+    }
+
+    @keyframes blink {
+      from,
+      to {
+        background-color: #72b6b5;
+      }
+
+      50% {
+        background-color: #42b983;
+      }
+    }
+
+    #project-link {
+      display: block;
+      position: fixed;
+      padding: 8px;
+      top: 0;
+      right: 0;
+    }
+  </style>
+  <!-- PILL JS -->
+  <script src="/assets/js/pill.min.js"></script>
+  <script>
+    // this is for pill js as the normal link wont work
+    function openLink(url) {
+      window.open(url, "_blank");
+    }
+  </script>
+
+</head>
+
+  <body>
+    <div id="indicator"></div>
+    <div id="page">
+      <style>
+        .title {
+          padding: 10% 5%;
+          color: #101417;
+          font-size: 18px;
+          font-weight: bold;
+          text-align: center;
+          background: #f78e66;
+          display: grid;
+        }
+      </style>
+      <!-- header -->
+      <header>
+	<a href="/">
+		<!-- <h3>pwndevils</h3> -->
+		<img src="assets/photos/pwndevils_banner.jpg">
+	</a>
+</header>
+
+      <!-- nav -->
+      <nav>
+	
+		
+			<a href="/">Home</a>
+		
+	
+		
+			<a href="/about">About</a>
+		
+	
+		
+			<a href="/contact_us">Contact Us</a>
+		
+	
+		
+			<a href="/lessons">Lessons/Writeups</a>
+		
+	
+		
+			<a href="/calendar">Calendar</a>
+		
+	
+		
+			<a href="/resources">Resources</a>
+		
+	
+</nav>
+      <!-- page content -->
+      <main class="content">
+        <p class="title">
+          pwndevils Constitution
+        </p>
+        <!-- <object data="assets/documents/Pwndevils_constitution.pdf" type="application/pdf" height="300%"  width="100%"> 
+</object>
+-->
+
+<iframe src="assets/documents/Pwndevils_constitution.pdf" width="100%" height="600px">
+    </iframe>
+
+
+
+
+      </main>
+
+      <!-- footer -->
+      <footer>
+
+<!--	<p>
+		This is a bio of me.
+	</p> -->
+
+	<p>
+		&copy 2020 | pwndevils
+	</p>
+</footer>
+<script src='/assets/js/site.js' id="pill_site_script" type='module'></script>
+
+    </div>
+  </body>
+</html>

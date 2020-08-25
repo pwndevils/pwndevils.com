@@ -87,6 +87,7 @@ Resources for <code>forensics</code>.
 <br>
 Resources for using the shell in Linux.
 <ul>
+<li><a href="https://overthewire.org/wargames/bandit/">Over The Wire</a></li>
 <li><a href="https://www.youtube.com/watch?v=b5NmtmNwMgU&list=PLW5y1tjAOzI2ZYTlMdGzCV8AJuoqW5lKB">Hak5:Linux Terminal Resources</a></li>
 </ul>
 </details>

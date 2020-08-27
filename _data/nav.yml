@@ -5,7 +5,7 @@ list:
     url: about
   - title: Contact Us
     url: contact_us
-  - title: Lessons/Writeups
+  - title: Writeups
     url: lessons
   - title: Calendar
     url: calendar

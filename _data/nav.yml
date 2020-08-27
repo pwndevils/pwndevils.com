@@ -11,5 +11,8 @@ list:
     url: calendar
   - title: Resources
     url: resources
+  - title: Getting Started
+    url: getting-started
+
     
 

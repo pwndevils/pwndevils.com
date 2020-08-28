@@ -12,7 +12,7 @@ Welcome to your first few steps as a CTFer! In this post we attempt to give **al
 As you go about these section, remember you can always reach out to anyone on the [Shellphish Discord](https://discord.gg/MeMcTvj) in the `#pwndevils` channel. We love to help new people learn!
 
 # Starting Places
-1. <A href="#starting-as-a-bit">Bit</A>: I don't know what a VM or Linux is.
+1. <A href="?dummy=1#starting-as-a-bit">Bit</A>: I don't know what a VM or Linux is.
 2. [Byte](#starting-as-a-byte): I'm not confident with **any** of the following commands: `find`, `ssh`, `file`, or `grep`.
 3. [Kilobyte](#starting-as-a-kilobyte): I don't know C or how to use C pointers.
 4. [Megabyte](#starting-as-a-megabyte): I don't know an assembly language. 

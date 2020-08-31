@@ -21,6 +21,6 @@ This meeting went over a brief introduction of our club and our goals for the se
 <br>
 In this meeting, we go over the setting up of your CSE466 pwn.college account. We then move into introducing the basics to reversing and the relation between assembly and C code. 
 <ul>
-<li><a href="downloads/8_31_2020/">Resource Downloads</a></li>
+<li><a href="https://github.com/pwndevils/pwndevils.com/tree/master/downloads/8_31_2020">Resource Downloads</a></li>
 </ul>
 </details>

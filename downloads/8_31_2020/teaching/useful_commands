@@ -1,0 +1,63 @@
+Useful Stuff:
+=============
+* gdb (gef plugin)
+* objdump 
+* gcc
+* readelf
+* strings
+* xxd 
+* ldd 
+Bad:
+rabin (radare)
+ipython3
+
+
+Keywords:
+Stack 
+Registers (places to hold stuff)
+RAX vs EAX (general purpose registers) 
+Executable Likeable Format 
+ELF Sections
+E-Flag in x86 
+
+
+Format Warz:
+ELF (linux)
+PE (windows)
+ELF-Mach (macos) 
+
+ELF Format:
+.text: this is where code is located
+.rodata: strings and things we can't change are stored 
+.plt: where linking external format is located 
+.bss: changeable data is located 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -9,7 +9,7 @@ community, and have competitions every weekends.
 We play CTF as [Shellphish](http://shellphish.net/), one of the oldest hacking
 collectives in the United States. Join our discord to lean more!
 
-Discord: [Shellphish Server](https://discord.gg/MeMcTvj)
+Discord: [Shellphish Server](https://discord.gg/BAfPrrwyg5)
 
 
 <!--

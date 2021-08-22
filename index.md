@@ -7,7 +7,7 @@ layout: home
 
 Welcome to the archived pwndevils site. The pwndevils is no more and has
 switched its name to the ASU Hacking Club. You can find the new site and club
-information [here](http://asuhacking.clu). 
+information [here](http://asuhacking.club). 
 
 This site will remain for historical reasons. 
 

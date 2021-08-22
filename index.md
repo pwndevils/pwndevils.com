@@ -3,14 +3,13 @@ title: Welcome to the pwndevils website!
 layout: home
 ---
 
-Welcome to the pwndevils, a hacking club located at Arizona State University. 
-We are active in the [CTF](https://www.youtube.com/watch?v=8ev9ZX9J45A)
-community, and have competitions every weekends. 
-We play CTF as [Shellphish](http://shellphish.net/), one of the oldest hacking
-collectives in the United States. Join our discord to lean more!
+## The pwndevils has re-branded! 
 
-Discord: [Shellphish Server](https://discord.gg/BAfPrrwyg5)
+Welcome to the archived pwndevils site. The pwndevils is no more and has
+switched its name to the ASU Hacking Club. You can find the new site and club
+information [here](http://asuhacking.clu). 
 
+This site will remain for historical reasons. 
 
 <!--
 {% for post in site.posts %}
